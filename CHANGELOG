@@ -1,0 +1,20 @@
+=== 0.1.0 2015-06-23
+
+* Delete unuse source, add README.md and RequestExample.md.
+
+=== 0.0.5 2015-06-19
+
+* Fix all features.
+
+=== 0.0.3 2015-06-15
+
+* Fix Charge, Token, Event, Transfer.
+
+=== 0.0.2 2015-06-12
+
+* Set the test key, fix Account.
+
+=== 0.0.1 2015-06-11
+
+* Init source.
+
