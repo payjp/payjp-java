@@ -5,6 +5,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
@@ -19,25 +20,25 @@ public class Event extends APIResource {
 
 	public static Event retrieve(String id) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
-			APIException {
+			CardException, APIException {
 		return retrieve(id, (RequestOptions) null);
 	}
 
 	public static EventCollection all(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return all(params, (RequestOptions) null);
 	}
 
 	public static Event retrieve(String id, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, instanceURL(Event.class, id), null, Event.class, options);
 	}
 
 	public static EventCollection all(Map<String, Object> params, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, classURL(Event.class), params, EventCollection.class, options);
 	}
 

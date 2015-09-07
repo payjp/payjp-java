@@ -5,6 +5,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
@@ -51,25 +52,25 @@ public class ExternalAccount extends APIResource {
 
     public ExternalAccount update(Map<String, Object> params) throws
             AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException {
+            APIConnectionException, CardException, APIException {
         return update(params, null);
     }
 
     public ExternalAccount update(Map<String, Object> params, RequestOptions options)
             throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException {
+            APIConnectionException, CardException, APIException {
         return request(RequestMethod.POST, this.getInstanceURL(), params, ExternalAccount.class, options);
     }
 
     public DeletedExternalAccount delete() throws AuthenticationException,
             InvalidRequestException, APIConnectionException,
-            APIException {
+            CardException, APIException {
         return delete(null);
     }
 
     public DeletedExternalAccount delete(RequestOptions options) throws
             AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException {
+            APIConnectionException, CardException, APIException {
         return request(RequestMethod.DELETE, this.getInstanceURL(), null, DeletedExternalAccount.class, options);
     }
 }

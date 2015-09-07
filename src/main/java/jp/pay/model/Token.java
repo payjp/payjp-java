@@ -5,6 +5,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
@@ -67,25 +68,25 @@ public class Token extends APIResource {
 
 	public static Token create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return create(params, (RequestOptions) null);
 	}
 
 	public static Token retrieve(String id) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
-			APIException {
+			CardException, APIException {
 		return retrieve(id, (RequestOptions) null);
 	}
 
 	public static Token create(Map<String, Object> params, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.POST, classURL(Token.class), params, Token.class, options);
 	}
 
 	public static Token retrieve(String id, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, instanceURL(Token.class, id), null, Token.class, options);
 	}
 }

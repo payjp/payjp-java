@@ -44,7 +44,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 			Map<String, Object> params,
 			Class<T> clazz,
 			APIResource.RequestType type,
-			RequestOptions options) throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException {
+			RequestOptions options) throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		return _request(method, url, params, clazz, type, options);
 	}
 
@@ -94,6 +94,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		if (customURLStreamHandlerClassName != null) {
 			// instantiate the custom handler provided
 			try {
+                @SuppressWarnings("unchecked")
 				Class<URLStreamHandler> clazz = (Class<URLStreamHandler>) Class
 						.forName(customURLStreamHandlerClassName);
 				Constructor<URLStreamHandler> constructor = clazz
@@ -314,7 +315,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 			String url, Map<String, Object> params, Class<T> clazz,
 			APIResource.RequestType type, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			CardException, APIConnectionException, APIException {
 		if (options == null) {
 			options = RequestOptions.getDefault();
 		}
@@ -496,20 +497,18 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 
 	}
 
-	private static void handleAPIError(String rBody, int rCode)
-			throws InvalidRequestException, AuthenticationException,
-			APIException {
+	private static void handleAPIError(String rBody, int rCode) throws InvalidRequestException, AuthenticationException, CardException, APIException {
 		LivePayjpResponseGetter.Error error = APIResource.GSON.fromJson(rBody,
 				LivePayjpResponseGetter.ErrorContainer.class).error;
 		switch (rCode) {
 		case 400:
-			throw new InvalidRequestException(error.message, error.param, error.type, error.code, null);
+			throw new InvalidRequestException(error.message, error.param, error.type, error.code);
 		case 404:
-			throw new InvalidRequestException(error.message, error.param, null);
+			throw new InvalidRequestException(error.message, error.param);
 		case 401:
 			throw new AuthenticationException(error.message);
 		case 402:
-			throw new CardException(error.message, error.param, error.type, error.code, null);
+			throw new CardException(error.message, error.param, error.code);
 		default:
 			throw new APIException(error.message, null);
 		}

@@ -5,6 +5,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
@@ -21,61 +22,61 @@ public class Plan extends APIResource {
 	
 	public static Plan create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return create(params, (RequestOptions) null);
 	}
 
 	public static Plan retrieve(String id) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
-			APIException {
+			CardException, APIException {
 		return retrieve(id, (RequestOptions) null);
 	}
 
 	public Plan update(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return update(params, (RequestOptions) null);
 	}
 
 	public static PlanCollection all(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return all(params, (RequestOptions) null);
 	}
 
 	public DeletedPlan delete() throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
-			APIException {
+			CardException, APIException {
 		return delete((RequestOptions) null);
 	}
 
 	public static Plan create(Map<String, Object> params, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.POST, classURL(Plan.class), params, Plan.class, options);
 	}
 
 	public static Plan retrieve(String id, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, instanceURL(Plan.class, id), null, Plan.class, options);
 	}
 
 	public Plan update(Map<String, Object> params, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.POST, instanceURL(Plan.class, this.id), params, Plan.class, options);
 	}
 
 	public static PlanCollection all(Map<String, Object> params, RequestOptions options)
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, classURL(Plan.class), params, PlanCollection.class, options);
 	}
 
 	public DeletedPlan delete(RequestOptions options) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
-			APIException {
+			CardException, APIException {
 		return request(RequestMethod.DELETE, instanceURL(Plan.class, this.id), null, DeletedPlan.class, options);
 	}
 
