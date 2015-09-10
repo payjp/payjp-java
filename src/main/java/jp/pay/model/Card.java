@@ -5,6 +5,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.RequestOptions;
 
@@ -28,23 +29,23 @@ public class Card extends ExternalAccount {
 
 	public Card update(Map<String, Object> params)
             throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException {
+            APIConnectionException, CardException, APIException {
         return update(params, (RequestOptions) null);
     }
 
     public Card update(Map<String, Object> params, RequestOptions options)
             throws AuthenticationException, InvalidRequestException,
-            APIConnectionException, APIException {
+            APIConnectionException, CardException, APIException {
         return request(RequestMethod.POST, this.getInstanceURL(), params, Card.class, options);
     }
 
     public DeletedCard delete()
-            throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException {
+            throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
         return delete((RequestOptions) null);
     }
 
 	public DeletedCard delete(RequestOptions options)
-			throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException {
+			throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException {
 		return request(RequestMethod.DELETE, this.getInstanceURL(), null, DeletedCard.class, options);
 	}
 

@@ -5,6 +5,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 
 public interface PayjpResponseGetter {
@@ -14,6 +15,6 @@ public interface PayjpResponseGetter {
 			Map<String, Object> params,
 			Class<T> clazz,
 			APIResource.RequestType type,
-			RequestOptions options) throws AuthenticationException, InvalidRequestException, APIConnectionException, APIException;
+			RequestOptions options) throws AuthenticationException, InvalidRequestException, APIConnectionException, CardException, APIException;
 }
 

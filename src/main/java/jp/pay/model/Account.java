@@ -6,6 +6,7 @@ import java.util.Map;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
@@ -44,7 +45,7 @@ public class Account extends APIResource {
 
 	public static Account retrieve()
 			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, APIException {
+			APIConnectionException, CardException, APIException {
 		return request(
 			RequestMethod.GET,
 			classURL(Account.class),

@@ -14,6 +14,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
 public class ExternalAccountTypeAdapterFactory implements TypeAdapterFactory {
+    @SuppressWarnings("unchecked")
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         if (!ExternalAccount.class.isAssignableFrom(type.getRawType())) {
             return null; // this class only serializes 'ExternalAccount' and its subtypes

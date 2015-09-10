@@ -12,6 +12,7 @@ import jp.pay.Payjp;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.model.ExternalAccountTypeAdapterFactory;
 import jp.pay.model.PayjpObject;
@@ -106,8 +107,8 @@ public abstract class APIResource extends PayjpObject {
 	protected static <T> T multipartRequest(APIResource.RequestMethod method,
 			String url, Map<String, Object> params, Class<T> clazz,
 			RequestOptions options) throws AuthenticationException,
-			InvalidRequestException, APIConnectionException, 
-			APIException {
+			InvalidRequestException, APIConnectionException,
+            CardException, APIException {
 		return APIResource.payjpResponseGetter.request(method, url, params, clazz,
 				APIResource.RequestType.MULTIPART, options);
 	}
@@ -116,7 +117,7 @@ public abstract class APIResource extends PayjpObject {
 			String url, Map<String, Object> params, Class<T> clazz,
 			RequestOptions options) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException, 
-			APIException {
+			CardException, APIException {
 		return APIResource.payjpResponseGetter.request(method, url, params, clazz,
 				APIResource.RequestType.NORMAL, options);
 	}

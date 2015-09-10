@@ -13,12 +13,19 @@ public class InvalidRequestException extends PayjpException {
 		this.param = param;
 	}
 	
+	public InvalidRequestException(String message, String param) {
+		this(message, param, null);
+	}
+	
 	public InvalidRequestException(String message, String param, String type, String code, Throwable e) {
 		super(message, e);
 		this.param = param;
 		this.type = type;
 		this.code = code;
-		
+	}
+
+	public InvalidRequestException(String message, String param, String type, String code) {
+        this(message, param, type, code, null);
 	}
 
 	public String getParam() {
