@@ -12,14 +12,15 @@ public class CardException extends PayjpException {
 		this.param = param;
 	}
 
-	public CardException(String message, String code, String param) {
+	public CardException(String message, String param, String code) {
         this(message, code, param, null);
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
 	}
+
 	public String getParam() {
-		return param;
+		return this.param;
 	}
 }

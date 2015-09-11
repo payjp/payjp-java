@@ -5,7 +5,7 @@ public class DeletedSubscription extends PayjpObject implements DeletedPayjpObje
 	String id;
 	Boolean deleted;
 	Boolean livemode;
-	
+
 	public String getId() {
 		return id;
 	}

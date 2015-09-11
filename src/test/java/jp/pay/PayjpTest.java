@@ -1,6 +1,7 @@
 package jp.pay;
 
 
+import jp.pay.exception.CardException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -248,7 +249,7 @@ public class PayjpTest {
 		assertEquals(charges.size(), 1);
 	}
 
-	@Test(expected = InvalidRequestException.class)
+	@Test(expected = CardException.class)
 	public void testInvalidCard() throws PayjpException {
 		Map<String, Object> invalidChargeParams = new HashMap<String, Object>();
 		invalidChargeParams.putAll(defaultChargeParams);
@@ -273,7 +274,7 @@ public class PayjpTest {
 		try {
 			Charge.create(declinedChargeParams);
 		}
-		catch (InvalidRequestException e) {
+		catch (CardException e) {
 			assertEquals("card_declined", e.getCode());
 		}
 	}
@@ -291,7 +292,7 @@ public class PayjpTest {
 		try {
 			Charge.create(declinedChargeParams);
 		}
-		catch (InvalidRequestException e) {
+		catch (CardException e) {
 			assertEquals("expired_card", e.getCode());
 		}
 	}
@@ -309,7 +310,7 @@ public class PayjpTest {
 		try {
 			Charge.create(declinedChargeParams);
 		}
-		catch (InvalidRequestException e) {
+		catch (CardException e) {
 			assertEquals("invalid_cvc", e.getCode());
 		}
 	}
@@ -327,7 +328,7 @@ public class PayjpTest {
 		try {
 			Charge.create(declinedChargeParams);
 		}
-		catch (InvalidRequestException e) {
+		catch (CardException e) {
 			assertEquals("processing_error", e.getCode());
 		}
 	}
@@ -621,26 +622,6 @@ public class PayjpTest {
 	}
 
 	@Test
-	public void testeSubscriptionUpdat() throws PayjpException {
-		Subscription createdSubscription = Subscription.create(getSubscriptionParams());
-
-		Plan plan = Plan.create(getUniquePlanParams());
-
-		Date date = new Date();
-		Long trialEnd = date.getTime()/1000 + 1000;
-
-		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
-		subscriptionParams.put("plan", plan.getId());
-		subscriptionParams.put("trial_end", trialEnd);
-
-		Subscription updatedSubscription = createdSubscription.update(subscriptionParams);
-
-		assertEquals(updatedSubscription.getPlan().getId(), plan.getId());
-		assertEquals(updatedSubscription.getTrialEnd(), trialEnd);
-		assertEquals(updatedSubscription.getStatus(), "trial");
-	}
-
-	@Test
 	public void testSubscriptionList() throws PayjpException {
 		// Create
 		Subscription.create(getSubscriptionParams());
@@ -668,13 +649,9 @@ public class PayjpTest {
 		Subscription resume_r = Subscription.retrieve(sub.getId());
 		assertEquals("active", resume_r.getStatus());
 
-		Map<String, Object> pauseParams = new HashMap<String, Object>();
-		Long resumeAt = sub.getCreated()+10000;
-		pauseParams.put("resumed_at", resumeAt);
-
-		Subscription pause_2 =  resume.pause(pauseParams, null);
+		Subscription pause_2 =  resume.pause();
 		assertEquals("paused", pause_2.getStatus());
-		assertEquals(resumeAt, pause_2.getResumedAt());
+		assertEquals(null, pause_2.getResumedAt());
 
 		Map<String, Object> resumeParams = new HashMap<String, Object>();
 		Long trialEnd = sub.getCreated()+5000;
