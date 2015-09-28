@@ -7,5 +7,4 @@ public class APIException extends PayjpException {
 	public APIException(String message, Throwable e) {
 		super(message, e);
 	}
-
 }
