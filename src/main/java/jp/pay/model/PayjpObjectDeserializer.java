@@ -84,11 +84,11 @@ public class PayjpObjectDeserializer implements JsonDeserializer<PayjpObject> {
 			throws JsonParseException {
 		PayjpObject object = null;
 		JsonObject jsonObject = json.getAsJsonObject();
-		
+
 		for(Map.Entry<String, JsonElement> entry: jsonObject.entrySet()) {
 			String key = entry.getKey();
 			JsonElement element = entry.getValue();
-			
+
 			if ("object".equals(key)) {
 				String type = element.getAsString();
 				Class<PayjpObject> cl = objectMap.get(type);

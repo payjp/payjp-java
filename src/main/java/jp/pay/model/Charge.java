@@ -164,7 +164,7 @@ public class Charge extends APIResource {
 	public void setSubscription(String subscription) {
 		this.subscription = subscription;
 	}
-	
+
 	public static Charge create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {

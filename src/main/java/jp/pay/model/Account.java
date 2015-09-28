@@ -53,7 +53,7 @@ public class Account extends APIResource {
 			Account.class,
 			null);
 	}
-	
+
 	public static class Merchant extends PayjpObject {
 		Boolean bankEnabled;
 		List<String> brandsAccepted;
@@ -77,71 +77,71 @@ public class Account extends APIResource {
 		public Boolean getBankEnabled() {
 			return bankEnabled;
 		}
-		
+
 		public List<String> getBrandsAccepted() {
 			return brandsAccepted;
 		}
-		
+
 		public String getBusinessType() {
 			return businessType;
 		}
-		
+
 		public String getChargeType() {
 			return chargeType;
 		}
-		
+
 		public String getContactPhone() {
 			return contactPhone;
 		}
-		
+
 		public String getCountry() {
 			return country;
 		}
-		
+
 		public Long getCreated() {
 			return created;
 		}
-		
+
 		public List<String> getCurrenciesSupported() {
 			return currenciesSupported;
 		}
-		
+
 		public String getDefaultCurrency() {
 			return defaultCurrency;
 		}
-		
+
 		public Boolean getDetailsSubmitted() {
 			return detailsSubmitted;
 		}
-		
+
 		public String getId() {
 			return id;
 		}
-		
+
 		public Long getLivemodeActivatedAt() {
 			return livemodeActivatedAt;
 		}
-		
+
 		public Boolean getLivemodeEnabled() {
 			return livemodeEnabled;
 		}
-		
+
 		public String getProductDetail() {
 			return productDetail;
 		}
-		
+
 		public String getProductName() {
 			return productName;
 		}
-		
+
 		public String getProductType() {
 			return productType;
 		}
-		
+
 		public Boolean getSitePublished() {
 			return sitePublished;
 		}
-		
+
 		public String getUrl() {
 			return url;
 		}

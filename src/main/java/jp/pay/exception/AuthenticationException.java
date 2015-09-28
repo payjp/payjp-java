@@ -1,8 +1,6 @@
 package jp.pay.exception;
 
 public class AuthenticationException extends PayjpException {
-
-
 	public AuthenticationException(String message) {
 		super(message);
 	}
