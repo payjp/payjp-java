@@ -2,6 +2,8 @@ package jp.pay;
 
 
 import jp.pay.exception.CardException;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import jp.pay.model.Card;
 import jp.pay.model.Charge;
 import jp.pay.model.ChargeCollection;
 import jp.pay.model.Customer;
+import jp.pay.model.CustomerCardCollection;
 import jp.pay.model.CustomerCollection;
 import jp.pay.model.CustomerSubscriptionCollection;
 import jp.pay.model.DeletedCard;
@@ -27,17 +30,25 @@ import jp.pay.model.DeletedCustomer;
 import jp.pay.model.DeletedPlan;
 import jp.pay.model.DeletedSubscription;
 import jp.pay.model.Event;
+import jp.pay.model.EventCollection;
 import jp.pay.model.Plan;
+import jp.pay.model.PlanCollection;
 import jp.pay.model.Subscription;
+import jp.pay.model.SubscriptionCollection;
 import jp.pay.model.Token;
 import jp.pay.model.Transfer;
+import jp.pay.model.TransferChargeCollection;
+import jp.pay.model.TransferCollection;
+import jp.pay.net.APIResource;
+import jp.pay.net.LivePayjpResponseGetter;
+import jp.pay.net.PayjpResponseGetter;
 import jp.pay.net.RequestOptions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class PayjpTest {
+public class PayjpTest extends BasePayjpTest {
 	static Map<String, Object> defaultCardParams = new HashMap<String, Object>();
 	static Map<String, Object> defaultDebitCardParams = new HashMap<String, Object>();
 	static Map<String, Object> defaultChargeParams = new HashMap<String, Object>();
@@ -70,13 +81,26 @@ public class PayjpTest {
 	}
 
 	static Map<String, Object> getSubscriptionParams() throws PayjpException {
+		stubNetwork(Plan.class, "{\"id\":\"1\"}");
 		Plan plan = Plan.create(getUniquePlanParams());
+		stubNetwork(Customer.class, "{\"id\":\"1\"}");
 		Customer customer = Customer.create(defaultCustomerParams);
 		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
 		subscriptionParams.put("plan", plan.getId());
 		subscriptionParams.put("customer", customer.getId());
 		return subscriptionParams;
 	}
+
+    @Before
+    public void mockPayjpResponseGetter() {
+        APIResource.setPayjpResponseGetter(networkMock);
+    }
+
+    @After
+    public void unmockPayjpResponseGetter() {
+        /* This needs to be done because tests aren't isolated in Java */
+        APIResource.setPayjpResponseGetter(new LivePayjpResponseGetter());
+    }
 
 	@Before
 	public void before() {
@@ -136,6 +160,7 @@ public class PayjpTest {
 
 	@Test
 	public void testChargeCreate() throws PayjpException {
+		stubNetwork(Charge.class, "{\"refunded\":false,\"paid\":true}");
 		Charge createdCharge = Charge.create(defaultChargeParams);
 		assertFalse(createdCharge.getRefunded());
 		assertTrue(createdCharge.getPaid());
@@ -146,6 +171,7 @@ public class PayjpTest {
 
 	@Test
 	public void testChargeListByCustomer() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":0,\"data\":[]}}");
 		Customer customer = Customer.create(defaultCustomerParams);
 
 		Map<String, Object> createParams = new HashMap<String, Object>();
@@ -153,11 +179,13 @@ public class PayjpTest {
 		createParams.put("amount", 100);
 		createParams.put("currency", currency);
 
+		stubNetwork(Charge.class, "{}");
 		Charge charge = Charge.create(createParams);
 
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("customer", customer.getId());
 
+		stubNetwork(ChargeCollection.class, "{\"count\":1,\"data\":[{}]}");
 		ChargeCollection charges = Charge.all(listParams);
 		assertEquals(1, charges.getData().size());
 		assertEquals(charge.getId(), charges.getData().get(0).getId());
@@ -165,6 +193,7 @@ public class PayjpTest {
 
 	@Test
 	public void testChargeRetrieveNullId() throws PayjpException {
+		stubNetwork(Card.class, 400, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"\",\"param\":\"\"}}");
 		try {
 			Charge.retrieve(null);
 			assertTrue(false);
@@ -176,12 +205,14 @@ public class PayjpTest {
 
 	@Test
 	public void testChargeUpdate() throws PayjpException {
+		stubNetwork(Charge.class, "{\"id\":1}");
 		Charge ch = Charge.create(defaultChargeParams);
 		String id = ch.getId();
 
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 		updateParams.put("description", "Updated Description");
 
+		stubNetwork(Charge.class, "{\"id\":1,\"description\":\"Updated Description\"}");
 		Charge updateCharge = ch.update(updateParams);
 
 		assertEquals(id, updateCharge.getId());
@@ -190,23 +221,27 @@ public class PayjpTest {
 
 	@Test
 	public void testChargeRefund() throws PayjpException {
+		stubNetwork(Charge.class, "{}");
 		Charge ch = Charge.create(defaultChargeParams);
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("amount", 10);
 		params.put("refund_reason", "foo bar");
 
+		stubNetwork(Charge.class, "{\"amount_refunded\":10,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
 		Charge ch_rf = ch.refund(params);
 		Integer ar = 10;
 		assertEquals(ar, ch_rf.getAmountRefunded());
 		assertTrue(ch_rf.getRefunded());
 		assertEquals("foo bar", ch_rf.getRefundReason());
 
+		stubNetwork(Charge.class, "{\"amount_refunded\":10,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
 		Charge chr = Charge.retrieve(ch.getId());
 		assertEquals(ar, chr.getAmountRefunded());
 		assertTrue(chr.getRefunded());
 		assertEquals("foo bar", chr.getRefundReason());
 
 		Map<String, Object> params_2 = new HashMap<String, Object>();
+		stubNetwork(Charge.class, "{\"amount_refunded\":100,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
 		Charge ch_rf_2 = chr.refund(params_2);
 
 		assertEquals(defaultChargeParams.get("amount"), ch_rf_2.getAmountRefunded());
@@ -215,11 +250,13 @@ public class PayjpTest {
 
 	@Test
 	public void testChargeRefundCreateApiKey() throws PayjpException {
+		stubNetwork(Charge.class, "{}");
 		Charge ch = Charge.create(defaultChargeParams);
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("amount", 10);
 		Charge ch_rf = ch.refund(params);
 
+		stubNetwork(Charge.class, "{\"amount_refunded\":10,\"refunded\":true}");
 		Charge ch_r = Charge.retrieve(ch.getId());
 		assertEquals(ch_rf.getId(), ch_r.getId());
 
@@ -233,9 +270,11 @@ public class PayjpTest {
 		Map<String, Object> options = new HashMap<String, Object>(defaultChargeParams);
 		options.put("capture", false);
 
+		stubNetwork(Charge.class, "{\"captured\":false}");
 		Charge created = Charge.create(options);
 		assertFalse(created.getCaptured());
 
+		stubNetwork(Charge.class, "{\"captured\":true}");
 		Charge captured = created.capture();
 		assertTrue(captured.getCaptured());
 	}
@@ -245,6 +284,7 @@ public class PayjpTest {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("limit", 1);
 		params.put("offset", 0);
+		stubNetwork(ChargeCollection.class, "{\"count\":1,\"data\":[{}]}");
 		List<Charge> charges = Charge.all(params).getData();
 		assertEquals(charges.size(), 1);
 	}
@@ -258,6 +298,7 @@ public class PayjpTest {
 		invalidCardParams.put("exp_month", 12);
 		invalidCardParams.put("exp_year", 2015);
 		invalidChargeParams.put("card", invalidCardParams);
+		stubNetwork(Charge.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"\",\"param\":\"\"}}");
 		Charge.create(invalidChargeParams);
 	}
 
@@ -289,6 +330,7 @@ public class PayjpTest {
 		declinedCardParams.put("exp_year", "2015");
 		declinedChargeParams.put("card", declinedCardParams);
 
+		stubNetwork(Card.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"expired_card\",\"message\":\"There is no card with ID: 0\",\"param\":\"\"}}");
 		try {
 			Charge.create(declinedChargeParams);
 		}
@@ -342,6 +384,7 @@ public class PayjpTest {
 		invalidCardParams.put("exp_month", "12");
 		invalidCardParams.put("exp_year", "2015");
 		invalidChargeParams.put("card", invalidCardParams);
+		stubNetwork(Charge.class, "{\"paid\":true,\"card\":{\"address_zip_check\":\"failed\",\"object\":\"card\"}}");
 		Charge charge = Charge.create(invalidChargeParams, cardSupportedRequestOptions);
 		assertEquals(charge.getPaid(), true);
 		assertEquals(charge.getCard().getAddressZipCheck(), "failed");
@@ -356,6 +399,7 @@ public class PayjpTest {
 		invalidCardParams.put("exp_month", "12");
 		invalidCardParams.put("exp_year", "2015");
 		invalidChargeParams.put("card", invalidCardParams);
+		stubNetwork(Charge.class, "{\"paid\":true,\"card\":{\"cvc_check\":\"failed\",\"object\":\"card\"}}");
 		Charge charge = Charge.create(invalidChargeParams, cardSupportedRequestOptions);
 		assertEquals(charge.getPaid(), true);
 		assertEquals(charge.getCard().getCvcCheck(), "failed");
@@ -370,6 +414,7 @@ public class PayjpTest {
 		invalidCardParams.put("exp_month", "12");
 		invalidCardParams.put("exp_year", "2015");
 		invalidChargeParams.put("card", invalidCardParams);
+		stubNetwork(Charge.class, "{\"paid\":true,\"card\":{\"cvc_check\":\"unavailable\",\"object\":\"card\"}}");
 		Charge charge = Charge.create(invalidChargeParams, cardSupportedRequestOptions);
 		assertEquals(charge.getPaid(), true);
 		assertEquals(charge.getCard().getCvcCheck(), "unavailable");
@@ -377,8 +422,9 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerCreate() throws PayjpException {
+		stubNetwork(Customer.class, "{\"description\":\"J Bindings Customer\",\"cards\":{\"count\":1,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":\"4242\",\"name\":null,\"object\": \"card\"}]}}");
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
-		assertEquals(customer.getDescription(), "J Bindings Customer");
+		assertEquals("J Bindings Customer", customer.getDescription());
 		List<Card> customerCards = customer.getCards().getData();
 		assertEquals(1, customerCards.size());
 		assertEquals("4242", customerCards.get(0).getLast4());
@@ -386,7 +432,9 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerRetrieve() throws PayjpException {
+		stubNetwork(Customer.class, "{\"id\":\"1\"}");
 		Customer createdCustomer = Customer.create(defaultCustomerParams);
+		stubNetwork(Customer.class, "{\"id\":\"1\"}");
 		Customer retrievedCustomer = Customer.retrieve(createdCustomer.getId());
 		assertEquals(createdCustomer.getCreated(),
 				retrievedCustomer.getCreated());
@@ -395,21 +443,26 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerUpdate() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":0,\"data\":[]},\"description\":\"\"}");
 		Customer createdCustomer = Customer.create(defaultCustomerParams);
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 		updateParams.put("description", "Updated Description");
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":0,\"data\":[]},\"description\":\"Updated Description\"}");
 		Customer updatedCustomer = createdCustomer.update(updateParams);
 		assertEquals(updatedCustomer.getDescription(), "Updated Description");
 	}
 
 	@Test
 	public void testCustomerDelete() throws PayjpException {
+		stubNetwork(Customer.class, "{\"id\":\"1\"}");
 		Customer created = Customer.create(defaultCustomerParams);
+		stubNetwork(DeletedCustomer.class, "{\"id\":\"1\",\"deleted\":true}");
 		DeletedCustomer deleted = created.delete();
 
 		assertTrue(deleted.getDeleted());
 		assertEquals(deleted.getId(), created.getId());
 
+		stubNetwork(Customer.class, 404, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"There is no customer with ID: 1\",\"param\":\"\"}}");
 		try {
 			Customer.retrieve(created.getId());
 		}
@@ -420,6 +473,7 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerCardCreate() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":1,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}]}}");
 		Customer createdCustomer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
 		String originalDefaultCard = createdCustomer.getDefaultCard();
 
@@ -427,54 +481,66 @@ public class PayjpTest {
 		cardPrams.put("number", "4242424242424242");
 		cardPrams.put("exp_year", 2022);
 		cardPrams.put("exp_month", 12);
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		Card addedCard = createdCustomer.createCard(cardPrams);
 
-		Map<String, Object> cardPrams_2 = new HashMap<String, Object>();
-		cardPrams_2.put("number", "4242424242424242");
-		cardPrams_2.put("exp_year", 2021);
-		cardPrams_2.put("exp_month", 12);
+		Map<String, Object> cardParams_2 = new HashMap<String, Object>();
+		cardParams_2.put("number", "4242424242424242");
+		cardParams_2.put("exp_year", 2021);
+		cardParams_2.put("exp_month", 12);
 
-		Map<String, Object> tokenPrams = new HashMap<String, Object>();
-		tokenPrams.put("card", cardPrams_2);
-		Token token = Token.create(tokenPrams);
+		Map<String, Object> tokenParams = new HashMap<String, Object>();
+		tokenParams.put("card", cardParams_2);
+		stubNetwork(Token.class, "{\"id\":1}");
+		Token token = Token.create(tokenParams);
 
+		stubNetwork(Card.class, "{\"id\":1,\"object\":\"card\"}");
 		createdCustomer.createCard(token.getId());
 
+		stubNetwork(Customer.class, "{\"id\":1,\"cards\":{\"count\":3,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"},{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"},{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}]}}");
 		Customer updatedCustomer = Customer.retrieve(createdCustomer.getId(), cardSupportedRequestOptions);
 		assertEquals((Integer) updatedCustomer.getCards().getData().size(), (Integer) 3);
 		assertEquals(updatedCustomer.getDefaultCard(), originalDefaultCard);
 
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 		updateParams.put("default_card", addedCard.getId());
+		stubNetwork(Customer.class, "{\"id\":1,\"cards\":{\"count\":3,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"},{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"},{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}]}}");
 		Customer customerAfterDefaultCardUpdate = updatedCustomer.update(updateParams, cardSupportedRequestOptions);
 		assertEquals((Integer) customerAfterDefaultCardUpdate.getCards().getData().size(), (Integer) 3);
 		assertEquals(customerAfterDefaultCardUpdate.getDefaultCard(), addedCard.getId());
 
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		assertEquals(customerAfterDefaultCardUpdate.getCards().retrieve(originalDefaultCard).getId(), originalDefaultCard);
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		assertEquals(customerAfterDefaultCardUpdate.getCards().retrieve(addedCard.getId()).getId(), addedCard.getId());
 	}
 
 	@Test
 	public void testCustomerCardRetrieve() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":1,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}]}}");
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
 		Card originalCard = customer.getCards().getData().get(0);
 
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		Card retrieveCard = customer.getCards().retrieve(originalCard.getId());
 		assertEquals(originalCard.getId(), retrieveCard.getId());
 	}
 
 	@Test
 	public void testCustomerCardUpdate() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":1,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}]}}");
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 
 		updateParams.put("name", "J Bindings Cardholder, Jr.");
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":\"J Bindings Cardholder, Jr.\",\"object\": \"card\"}");
 		Card updatedCard = customer.getCards().getData().get(0).update(updateParams);
-		assertEquals(updatedCard.getName(), "J Bindings Cardholder, Jr.");
+		assertEquals("J Bindings Cardholder, Jr.", updatedCard.getName());
 	}
 
 	@Test(expected=InvalidRequestException.class)
 	public void testCustomerUpdateToBlank() throws PayjpException {
+		stubNetwork(Customer.class, 400, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"description cannot be empty?\",\"param\":\"\"}}");
 		Customer createdCustomer = Customer.create(defaultCustomerParams);
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 		updateParams.put("description", "");
@@ -483,30 +549,37 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerUpdateToNull() throws PayjpException {
+		stubNetwork(Customer.class, "{\"description\":\"description\",\"cards\":{\"count\":0,\"data\":[]}}");
 		Customer createdCustomer = Customer.create(defaultCustomerParams);
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 		updateParams.put("description", null);
+		stubNetwork(Customer.class, "{\"description\":\"\",\"cards\":{\"count\":0,\"data\":[]}}");
 		Customer updatedCustomer = createdCustomer.update(updateParams);
 		assertEquals("",updatedCustomer.getDescription());
 	}
 
 	@Test
 	public void testCustomerCardDelete() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":1,\"data\":[{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":0,\"last4\":null,\"name\":null,\"object\": \"card\"}]}}");
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
 		Map<String, Object> cardPrams = new HashMap<String, Object>();
 		cardPrams.put("number", "4242424242424242");
 		cardPrams.put("exp_year", 2022);
 		cardPrams.put("exp_month", 12);
 
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":0,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		customer.createCard(cardPrams);
 
 		Card card = customer.getCards().getData().get(0);
+		stubNetwork(DeletedCard.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":0,\"last4\":null,\"name\":null,\"deleted\":true,\"object\": \"deleted_card\"}");
 		DeletedCard deletedCard = card.delete();
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":0,\"data\":[]}}");
 		Customer retrievedCustomer = Customer.retrieve(customer.getId(), cardSupportedRequestOptions);
 
 		assertTrue(deletedCard.getDeleted());
 		assertEquals(deletedCard.getId(), card.getId());
 
+		stubNetwork(Card.class, 404, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"There is no card with ID: 0\",\"param\":\"\"}}");
 		try {
 			retrievedCustomer.getCards().retrieve(card.getId());
 		}
@@ -517,39 +590,48 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerCardList() throws PayjpException {
+		stubNetwork(Customer.class, "{\"cards\":{\"count\":0,\"data\":[]}}");
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
-		Map<String, Object> cardPrams_2 = defaultCardParams;
-		cardPrams_2.put("exp_year", 2022);
-		customer.createCard(cardPrams_2);
+		Map<String, Object> cardParams_2 = defaultCardParams;
+		cardParams_2.put("exp_year", 2022);
+		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":0,\"last4\":null,\"name\":null,\"object\": \"card\"}");
+		customer.createCard(cardParams_2);
 
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 2);
 
+		stubNetwork(CustomerCardCollection.class, "{\"count\":2,\"data\":[{\"object\":\"card\"},{\"object\":\"card\"}]}");
 		List<Card> cards = customer.getCards().all(listParams).getData();
 		assertEquals(2, cards.size());
 	}
 
 	@Test
 	public void testCustomerSubscriptionList() throws PayjpException {
+		stubNetwork(Customer.class, "{\"subscriptions\":{\"count\":0,\"data\":[]}}");
 		Customer customer = Customer.create(defaultCustomerParams);
+		stubNetwork(Plan.class, "{}");
 		Plan plan = Plan.create(getUniquePlanParams());
+		stubNetwork(Plan.class, "{}");
 		Plan plan_2 = Plan.create(getUniquePlanParams());
 
 		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
 		subscriptionParams.put("plan", plan.getId());
 		subscriptionParams.put("customer", customer.getId());
 
+		stubNetwork(Subscription.class, "{}");
 		Subscription subscription = Subscription.create(subscriptionParams);
 
 		Map<String, Object> subscriptionParams_2 = new HashMap<String, Object>();
 		subscriptionParams_2.put("plan", plan_2.getId());
 		subscriptionParams_2.put("customer", customer.getId());
 
+		stubNetwork(Subscription.class, "{}");
 		Subscription subscription_2 = Subscription.create(subscriptionParams_2);
 
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 2);
 
+		stubNetwork(CustomerSubscriptionCollection.class, "{\"count\":2,\"data\":[{},{}]}");
 		CustomerSubscriptionCollection subscriptions = customer.getSubscriptions().all(listParams);
 
 		assertEquals(2, subscriptions.getData().size());
@@ -559,15 +641,19 @@ public class PayjpTest {
 
 	@Test
 	public void testCustomerSubscriptionRetrieve() throws PayjpException {
+		stubNetwork(Customer.class, "{\"id\":\"1\",\"subscriptions\":{\"count\":0,\"data\":[]}}");
 		Customer customer = Customer.create(defaultCustomerParams);
+		stubNetwork(Plan.class, "{\"id\":\"1\"}");
 		Plan plan = Plan.create(getUniquePlanParams());
 
 		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
 		subscriptionParams.put("plan", plan.getId());
 		subscriptionParams.put("customer", customer.getId());
 
+		stubNetwork(Subscription.class, "{\"id\":1,\"customer\":\"1\",\"plan\":{\"id\":1}}");
 		Subscription subscription = Subscription.create(subscriptionParams);
 
+		stubNetwork(Subscription.class, "{\"id\":1,\"customer\":\"1\",\"plan\":{\"id\":1}}");
 		Subscription subscription_retrieve = customer.getSubscriptions().retrieve(subscription.getId());
 
 		assertEquals(subscription.getId(), subscription_retrieve.getId());
@@ -579,6 +665,7 @@ public class PayjpTest {
 	public void testCustomerList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 3);
+		stubNetwork(CustomerCollection.class, "{\"count\":3,\"data\":[{\"id\":\"1\",\"object\":\"customer\"},{\"object\":\"customer\"},{\"object\":\"customer\"}]}");
 		CustomerCollection Customers = Customer.all(listParams);
 		assertEquals(Customers.getData().size(), 3);
 		assertNotNull(Customers.getData().get(0).getId());
@@ -586,12 +673,15 @@ public class PayjpTest {
 
 	@Test
 	public void testSubscriptionCreate() throws PayjpException {
+		stubNetwork(Plan.class, "{\"id\":1}");
 		Plan plan = Plan.create(getUniquePlanParams());
+		stubNetwork(Customer.class, "{}");
 		Customer customer = Customer.create(defaultCustomerParams);
 		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
 		subscriptionParams.put("plan", plan.getId());
 		subscriptionParams.put("customer", customer.getId());
 
+		stubNetwork(Subscription.class, "{\"status\":\"active\",\"plan\":{\"id\":\"1\"}}");
 		Subscription subscription = Subscription.create(subscriptionParams);
 
 		assertEquals(null, subscription.getCanceledAt());
@@ -604,14 +694,18 @@ public class PayjpTest {
 
 	@Test
 	public void testSubscriptionRetrieve() throws PayjpException {
+		stubNetwork(Plan.class, "{\"id\":\"1\"}");
 		Plan plan = Plan.create(getUniquePlanParams());
+		stubNetwork(Customer.class, "{}");
 		Customer customer = Customer.create(defaultCustomerParams);
 		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
 		subscriptionParams.put("plan", plan.getId());
 		subscriptionParams.put("customer", customer.getId());
 
+		stubNetwork(Subscription.class, "{}");
 		Subscription createdSubscription = Subscription.create(subscriptionParams);
 
+		stubNetwork(Subscription.class, "{\"status\":\"active\",\"plan\":{\"id\":\"1\"}}");
 		Subscription subscription = Subscription.retrieve(createdSubscription.getId());
 		assertEquals(null, subscription.getCanceledAt());
 		assertEquals(null, subscription.getPausedAt());
@@ -624,31 +718,41 @@ public class PayjpTest {
 	@Test
 	public void testSubscriptionList() throws PayjpException {
 		// Create
-		Subscription.create(getSubscriptionParams());
+		Map<String, Object> params = getSubscriptionParams();
+		stubNetwork(Subscription.class, "{\"plan\":{\"object\":\"plan\"},\"customer\":\"1\"}");
+		Subscription.create(params);
 
 		//list
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
 
+		stubNetwork(SubscriptionCollection.class, "{\"count\":1,\"data\":[{\"id\":\"1\"}]}");
 		List<Subscription> subs = Subscription.all(listParams).getData();
 		assertEquals(1, subs.size());
 	}
 
 	@Test
 	public void testSubscriptionPauseResumeCancel() throws PayjpException {
-		Subscription sub = Subscription.create(getSubscriptionParams());
+		Map<String, Object> params = getSubscriptionParams();
+		stubNetwork(Subscription.class, "{\"id\":\"1\",\"status\":\"active\",\"created\":0}");
+		Subscription sub = Subscription.create(params);
 		assertEquals("active", sub.getStatus());
 
+		stubNetwork(Subscription.class, "{\"status\":\"paused\"}");
 		Subscription pause =  sub.pause();
 		assertEquals("paused", pause.getStatus());
+		stubNetwork(Subscription.class, "{\"status\":\"paused\"}");
 		Subscription pause_r = Subscription.retrieve(sub.getId());
 		assertEquals("paused", pause_r.getStatus());
 
+		stubNetwork(Subscription.class, "{\"status\":\"active\"}");
 		Subscription resume =  pause.resume();
 		assertEquals("active", resume.getStatus());
+		stubNetwork(Subscription.class, "{\"status\":\"active\"}");
 		Subscription resume_r = Subscription.retrieve(sub.getId());
 		assertEquals("active", resume_r.getStatus());
 
+		stubNetwork(Subscription.class, "{\"status\":\"paused\"}");
 		Subscription pause_2 =  resume.pause();
 		assertEquals("paused", pause_2.getStatus());
 		assertEquals(null, pause_2.getResumedAt());
@@ -657,6 +761,7 @@ public class PayjpTest {
 		Long trialEnd = sub.getCreated()+5000;
 		resumeParams.put("trial_end", trialEnd);
 
+		stubNetwork(Subscription.class, "{\"status\":\"trial\",\"trial_end\":5000}");
 		Subscription resume_2 =  pause_2.resume(resumeParams, null);
 		assertEquals("trial", resume_2.getStatus());
 		assertEquals(trialEnd, resume_2.getTrialEnd());
@@ -664,6 +769,7 @@ public class PayjpTest {
 		Map<String, Object> cancelParams = new HashMap<String, Object>();
 		cancelParams.put("foo", "bar");
 
+		stubNetwork(Subscription.class, 400, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"Parameters are not allowed: /v1/subscriptions/1/cancel\",\"param\":\"\"}}");
 		try {
 			resume_2.cancel(cancelParams, null);
 		}
@@ -671,6 +777,7 @@ public class PayjpTest {
 			assertEquals("Parameters are not allowed: /v1/subscriptions/"+sub.getId()+"/cancel", e.getMessage());
 		}
 
+		stubNetwork(Subscription.class, "{\"status\":\"canceled\"}");
 		Subscription cancel =  resume.cancel();
 		assertEquals("canceled", cancel.getStatus());
 		Subscription cancel_r = Subscription.retrieve(sub.getId());
@@ -679,13 +786,17 @@ public class PayjpTest {
 
 	@Test
 	public void testSubscriptionDelete() throws PayjpException {
-		Subscription sub = Subscription.create(getSubscriptionParams());
+		Map<String, Object> params = getSubscriptionParams();
+		stubNetwork(Subscription.class, "{\"id\":\"1\"}");
+		Subscription sub = Subscription.create(params);
 
+		stubNetwork(DeletedSubscription.class, "{\"id\":\"1\",\"deleted\":\"true\"}");
 		DeletedSubscription deleted = sub.delete();
 
 		assertTrue(deleted.getDeleted());
 		assertEquals(deleted.getId(), sub.getId());
 
+		stubNetwork(Subscription.class, 404, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"There is no subscription with ID: 1\",\"param\":\"\"}}");
 		try {
 			Subscription.retrieve(sub.getId());
 		}
@@ -699,24 +810,29 @@ public class PayjpTest {
 		Map<String, Object> params = getUniquePlanParams();
 		params.put("trial_days", 30);
 
+		stubNetwork(Plan.class, "{\"interval\":\"month\",\"name\":\"J Bindings Plan\",\"trial_days\":30}");
 		Plan plan = Plan.create(params);
-		assertEquals(plan.getInterval(), "month");
-		assertEquals(plan.getName(), "J Bindings Plan");
-		assertEquals(plan.getTrialDays(), (Integer) 30);
+		assertEquals("month", plan.getInterval());
+		assertEquals("J Bindings Plan", plan.getName());
+		assertEquals((Integer) 30, plan.getTrialDays());
 	}
 
 	@Test
 	public void testPlanUpdate() throws PayjpException {
+		stubNetwork(Plan.class, "{}");
 		Plan createdPlan = Plan.create(getUniquePlanParams());
 		Map<String, Object> updateParams = new HashMap<String, Object>();
 		updateParams.put("name", "Updated Plan Name");
+		stubNetwork(Plan.class, "{\"name\":\"Updated Plan Name\"}");
 		Plan updatedplan = createdPlan.update(updateParams);
-		assertEquals(updatedplan.getName(), "Updated Plan Name");
+		assertEquals("Updated Plan Name", updatedplan.getName());
 	}
 
 	@Test
 	public void testPlanRetrieve() throws PayjpException {
+		stubNetwork(Plan.class, "{}");
 		Plan createdPlan = Plan.create(getUniquePlanParams());
+		stubNetwork(Plan.class, "{}");
 		Plan retrievedPlan = Plan.retrieve(createdPlan.getId());
 		assertEquals(createdPlan.getId(), retrievedPlan.getId());
 	}
@@ -726,17 +842,21 @@ public class PayjpTest {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
 		listParams.put("offset", 0);
+		stubNetwork(PlanCollection.class, "{\"count\":1,\"data\":[{}]}");
 		List<Plan> Plans = Plan.all(listParams).getData();
 		assertEquals(Plans.size(), 1);
 	}
 
 	@Test
 	public void testPlanDelete() throws PayjpException {
+		stubNetwork(Plan.class, "{\"id\":\"1\"}");
 		Plan createdPlan = Plan.create(getUniquePlanParams());
+		stubNetwork(DeletedPlan.class, "{\"id\":\"1\",\"deleted\":true}");
 		DeletedPlan deletedPlan = createdPlan.delete();
 		assertTrue(deletedPlan.getDeleted());
 		assertEquals(deletedPlan.getId(), createdPlan.getId());
 
+		stubNetwork(Plan.class, 404, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"There is no plan with ID: 1\",\"param\":\"\"}}");
 		try {
 			Plan.retrieve(createdPlan.getId());
 		}
@@ -747,25 +867,31 @@ public class PayjpTest {
 
 	@Test
 	public void testTokenCreate() throws PayjpException {
+		stubNetwork(Token.class, "{\"used\":false}");
 		Token token = Token.create(defaultTokenParams);
 		assertFalse(token.getUsed());
 	}
 
 	@Test
 	public void testTokenRetrieve() throws PayjpException {
+		stubNetwork(Token.class, "{}");
 		Token createdToken = Token.create(defaultTokenParams);
+		stubNetwork(Token.class, "{}");
 		Token retrievedToken = Token.retrieve(createdToken.getId());
 		assertEquals(createdToken.getId(), retrievedToken.getId());
 	}
 
 	@Test
 	public void testTokenUse() throws PayjpException {
+		stubNetwork(Token.class, "{}");
 		Token createdToken = Token.create(defaultTokenParams);
 		Map<String, Object> chargeWithTokenParams = new HashMap<String, Object>();
 		chargeWithTokenParams.put("amount", 199);
 		chargeWithTokenParams.put("currency", currency);
 		chargeWithTokenParams.put("card", createdToken.getId());
+		stubNetwork(Charge.class, "{}");
 		Charge.create(chargeWithTokenParams);
+		stubNetwork(Token.class, "{\"used\":true}");
 		Token retrievedToken = Token.retrieve(createdToken.getId());
 		assertTrue(retrievedToken.getUsed());
 	}
@@ -774,7 +900,9 @@ public class PayjpTest {
 	public void testEventRetrieve() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
+		stubNetwork(EventCollection.class, "{\"count\":1,\"data\":[{\"id\":\"1\"}]}");
 		Event event = Event.all(listParams).getData().get(0);
+		stubNetwork(Event.class, "{\"id\":\"1\"}");
 		Event retrievedEvent = Event.retrieve(event.getId());
 		assertEquals(event.getId(), retrievedEvent.getId());
 	}
@@ -783,6 +911,7 @@ public class PayjpTest {
 	public void testEventList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
+		stubNetwork(EventCollection.class, "{\"count\":1,\"data\":[{}]}");
 		List<Event> events = Event.all(listParams).getData();
 		assertEquals(events.size(), 1);
 	}
@@ -791,6 +920,7 @@ public class PayjpTest {
 	public void testTransferList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
+		stubNetwork(TransferCollection.class, "{\"count\":1,\"data\":[{}]}");
 		List<Transfer> transfers = Transfer.all(listParams).getData();
 		assertEquals(transfers.size(), 1);
 	}
@@ -799,9 +929,11 @@ public class PayjpTest {
 	public void testTransferRetrieve() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
+		stubNetwork(TransferCollection.class, "{\"count\":1,\"data\":[{}]}");
 		List<Transfer> transfers = Transfer.all(listParams).getData();
 		Transfer transfer = transfers.get(0);
 
+		stubNetwork(Transfer.class, "{}");
 		Transfer retrievedTransfer = Transfer.retrieve(transfer.getId());
 		assertEquals(transfer.getDate(), retrievedTransfer.getDate());
 		assertEquals(transfer.getId(), retrievedTransfer.getId());
@@ -811,13 +943,17 @@ public class PayjpTest {
 	public void testTransferCharges() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
+		stubNetwork(TransferCollection.class, "{\"count\":1,\"data\":[{}]}");
 		List<Transfer> transfers = Transfer.all(listParams).getData();
 		Transfer transfer = transfers.get(0);
 
 		Map<String, Object> listParams_2 = new HashMap<String, Object>();
 		listParams_2.put("limit", 3);
 		listParams_2.put("offset", 10);
-		Transfer.retrieve(transfer.getId()).getCharges().all(listParams_2);
+		stubNetwork(Transfer.class, "{\"charges\":{\"count\":0,\"data\":[]}}");
+		TransferChargeCollection charges = Transfer.retrieve(transfer.getId()).getCharges();
+		stubNetwork(TransferChargeCollection.class, "{\"count\":0,\"data\":[]}");
+		charges.all(listParams_2);
 	}
 
 	@Test
