@@ -27,7 +27,7 @@ public class DeletedExternalAccount extends PayjpObject implements DeletedPayjpO
 	String id;
 	Boolean deleted;
 	Boolean livemode;
-	
+
 	public String getId() {
 		return id;
 	}

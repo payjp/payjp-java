@@ -42,7 +42,7 @@ public class Plan extends APIResource {
 	Boolean livemode;
 	String name;
 	Integer trialDays;
-	
+
 	public static Plan create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {

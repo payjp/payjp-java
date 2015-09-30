@@ -89,7 +89,7 @@ public class Card extends ExternalAccount {
 	public Boolean getLivemode() {
 		return livemode;
 	}
-    
+
 	public Integer getExpMonth() {
 		return expMonth;
 	}

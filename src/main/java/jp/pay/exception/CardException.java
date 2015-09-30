@@ -29,20 +29,21 @@ public class CardException extends PayjpException {
 	private String code;
 	private String param;
 
-	public CardException(String message, String code, String param, Throwable e) {
+	public CardException(String message, String param, String code, Throwable e) {
 		super(message, e);
-		this.code = code;
 		this.param = param;
+		this.code = code;
 	}
 
-	public CardException(String message, String code, String param) {
-        this(message, code, param, null);
+	public CardException(String message, String param, String code) {
+		this(message, param, code, null);
 	}
 
 	public String getCode() {
-		return code;
+		return this.code;
 	}
+
 	public String getParam() {
-		return param;
+		return this.param;
 	}
 }

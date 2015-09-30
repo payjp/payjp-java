@@ -139,7 +139,7 @@ public abstract class APIResource extends PayjpObject {
 	protected static <T> T request(APIResource.RequestMethod method,
 			String url, Map<String, Object> params, Class<T> clazz,
 			RequestOptions options) throws AuthenticationException,
-			InvalidRequestException, APIConnectionException, 
+			InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		return APIResource.payjpResponseGetter.request(method, url, params, clazz,
 				APIResource.RequestType.NORMAL, options);

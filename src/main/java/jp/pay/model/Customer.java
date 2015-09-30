@@ -36,11 +36,11 @@ import jp.pay.net.RequestOptions;
 
 public class Customer extends APIResource {
 	CustomerCardCollection cards;
-	Long created;	
-	String defaultCard;	
+	Long created;
+	String defaultCard;
 	String description;
-	String email;	
-	String id;	
+	String email;
+	String id;
 	Boolean livemode;
 	CustomerSubscriptionCollection subscriptions;
 

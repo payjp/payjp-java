@@ -28,7 +28,7 @@ public class DeletedCustomer extends PayjpObject implements DeletedPayjpObject {
 	String id;
 	Boolean deleted;
 	Boolean livemode;
-	
+
 	public String getId() {
 		return id;
 	}
