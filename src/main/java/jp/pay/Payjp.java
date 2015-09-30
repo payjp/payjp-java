@@ -8,6 +8,11 @@ public abstract class Payjp {
 
 	private static volatile String apiBase = LIVE_API_BASE;
 
+	static {
+		final String _apiBase = System.getProperty("jp.pay.api.baseUrl");
+		if (_apiBase != null)
+			apiBase = _apiBase;
+	}
 
 	/**
 	 * (FOR TESTING ONLY) If you'd like your API requests to hit your own

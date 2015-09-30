@@ -130,11 +130,6 @@ public class PayjpTest {
 	}
 
 	@Test
-	public void testAPIBase() throws PayjpException {
-		assertEquals("https://api.pay.jp", Payjp.getApiBase());
-	}
-
-	@Test
 	public void testChargeCreate() throws PayjpException {
 		Charge createdCharge = Charge.create(defaultChargeParams);
 		assertFalse(createdCharge.getRefunded());
