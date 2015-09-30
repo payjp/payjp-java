@@ -11,6 +11,10 @@ import java.io.InputStream;
 import java.util.Map;
 
 import jp.pay.Payjp;
+import jp.pay.exception.APIException;
+import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.CardException;
+import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.PayjpException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
@@ -101,6 +105,7 @@ public class BasePayjpTest {
 	}
 
 	public static <T> void stubNetwork(Class<T> clazz, String response) throws PayjpException {
+		Mockito.reset(networkMock);
 		when(networkMock.request(
 					Mockito.any(APIResource.RequestMethod.class),
 					Mockito.anyString(),
@@ -108,6 +113,36 @@ public class BasePayjpTest {
 					Mockito.<Class<T>>any(),
 					Mockito.any(APIResource.RequestType.class),
 					Mockito.any(RequestOptions.class))).thenReturn(APIResource.GSON.fromJson(response, clazz));
+	}
+
+	public static <T> void stubNetwork(Class<T> clazz, int status, String response) throws PayjpException {
+		PayjpResponseGetter.Error error = APIResource.GSON.fromJson(response, PayjpResponseGetter.ErrorContainer.class).error;
+		Throwable exc;
+		switch (status) {
+		case 400:
+			exc = new InvalidRequestException(error.message, error.param, error.type, error.code);
+			break;
+		case 404:
+			exc = new InvalidRequestException(error.message, error.param);
+			break;
+		case 401:
+			exc = new AuthenticationException(error.message);
+			break;
+		case 402:
+			exc = new CardException(error.message, error.param, error.code);
+			break;
+		default:
+			exc = new APIException(error.message, null);
+			break;
+		}
+		Mockito.reset(networkMock);
+		when(networkMock.request(
+					Mockito.any(APIResource.RequestMethod.class),
+					Mockito.anyString(),
+					Mockito.<Map<String, Object>>any(),
+					Mockito.<Class<T>>any(),
+					Mockito.any(APIResource.RequestType.class),
+					Mockito.any(RequestOptions.class))).thenThrow(exc);
 	}
 
 	public static class ParamMapMatcher extends ArgumentMatcher<Map<String, Object>> {

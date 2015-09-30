@@ -9,6 +9,21 @@ import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 
 public interface PayjpResponseGetter {
+	public static class Error {
+		public String type;
+
+		public String message;
+
+		public String code;
+
+		public String param;
+	}
+
+	// represents Errors returned as JSON
+	public static class ErrorContainer {
+		public Error error;
+	}
+
 	public <T> T request(
 			APIResource.RequestMethod method,
 			String url,

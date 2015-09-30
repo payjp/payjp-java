@@ -234,22 +234,6 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		return flatParams;
 	}
 
-	// represents Errors returned as JSON
-	private static class ErrorContainer {
-		private LivePayjpResponseGetter.Error error;
-	}
-
-	private static class Error {
-		@SuppressWarnings("unused")
-		String type;
-
-		String message;
-
-		String code;
-
-		String param;
-	}
-
 	private static String getResponseBody(InputStream responseStream)
 			throws IOException {
 		//\A is the beginning of
@@ -498,8 +482,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	}
 
 	private static void handleAPIError(String rBody, int rCode) throws InvalidRequestException, AuthenticationException, CardException, APIException {
-		LivePayjpResponseGetter.Error error = APIResource.GSON.fromJson(rBody,
-				LivePayjpResponseGetter.ErrorContainer.class).error;
+		Error error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
 		switch (rCode) {
 		case 400:
 			throw new InvalidRequestException(error.message, error.param, error.type, error.code);
