@@ -1,5 +1,7 @@
 # PAY.JP for Java
 
+[![Build Status](https://travis-ci.org/payjp/payjp-java.svg?branch=master)](https://travis-ci.org/payjp/payjp-java)
+
 Requirements
 ============
 
