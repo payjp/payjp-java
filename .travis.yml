@@ -8,4 +8,4 @@ jdk:
 
 sudo: false
 
-install: mvn install -Dgpg.skip=true -DskipTests
+install: mvn install -Dgpg.skip=true
