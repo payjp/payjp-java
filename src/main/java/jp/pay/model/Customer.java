@@ -43,6 +43,7 @@ public class Customer extends APIResource {
 	String id;
 	Boolean livemode;
 	CustomerSubscriptionCollection subscriptions;
+	Map<String, String> metadata = new HashMap<String, String>();
 
 	public Long getCreated() {
 		return created;
@@ -98,6 +99,19 @@ public class Customer extends APIResource {
 
 	public CustomerSubscriptionCollection getSubscriptions() {
 		return subscriptions;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * Assigning a whole collection from outside the object is not quite a right thing to do.
+	 * Be stick to use getMetadata().
+	 */
+	@Deprecated
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 
 	public static Customer create(Map<String, Object> params)
