@@ -24,6 +24,7 @@
 package jp.pay.model;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
@@ -34,7 +35,7 @@ import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 
 
-public class Subscription extends APIResource{
+public class Subscription extends APIResource implements MetadataStore<Subscription> {
 	Long canceledAt;
 	Long created;
 	Long currentPeriodEnd;
@@ -49,6 +50,7 @@ public class Subscription extends APIResource{
 	String status;
 	Long trialEnd;
 	Long trialStart;
+	Map<String, String> metadata = new HashMap<String, String>();
 
 	public static Subscription create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
@@ -262,5 +264,18 @@ public class Subscription extends APIResource{
 
 	public void setResumedAt(Long resumedAt) {
 		this.resumedAt = resumedAt;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * Assigning a whole collection from outside the object is not quite a right thing to do.
+	 * Be stick to use getMetadata().
+	 */
+	@Deprecated
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 }

@@ -24,6 +24,7 @@
 package jp.pay.model;
 
 import java.util.Map;
+import java.util.HashMap;
 
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
@@ -32,7 +33,7 @@ import jp.pay.exception.CardException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.RequestOptions;
 
-public class Card extends ExternalAccount {
+public class Card extends ExternalAccount implements MetadataStore<Card> {
 	String addressCity;
 	String addressLine1;
 	String addressLine2;
@@ -49,6 +50,7 @@ public class Card extends ExternalAccount {
 	String last4;
 	Boolean livemode;
 	String name;
+	Map<String, String> metadata = new HashMap<String, String>();
 
 	public Card update(Map<String, Object> params)
             throws AuthenticationException, InvalidRequestException,
@@ -171,7 +173,21 @@ public class Card extends ExternalAccount {
 	public String getBrand() {
 		return brand;
 	}
+
 	public void setBrand(String brand) {
 		this.brand = brand;
+	}
+
+	public Map<String, String> getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * Assigning a whole collection from outside the object is not quite a right thing to do.
+	 * Be stick to use getMetadata().
+	 */
+	@Deprecated
+	public void setMetadata(Map<String, String> metadata) {
+		this.metadata = metadata;
 	}
 }
