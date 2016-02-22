@@ -34,7 +34,7 @@ import jp.pay.exception.InvalidRequestException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 
-public class Customer extends APIResource {
+public class Customer extends APIResource implements MetadataStore<Customer> {
 	CustomerCardCollection cards;
 	Long created;
 	String defaultCard;
