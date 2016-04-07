@@ -34,8 +34,10 @@ import org.junit.Test;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Calendar;
 
 import jp.pay.Payjp;
 import jp.pay.exception.InvalidRequestException;
@@ -68,6 +70,7 @@ import jp.pay.net.PayjpResponseGetter;
 import jp.pay.net.RequestOptions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -83,6 +86,7 @@ public class PayjpTest extends BasePayjpTest {
 	static RequestOptions cardSupportedRequestOptions;
 	static String currency = "jpy";
 	static String country = "JP";
+	static String three_years_later = null;
 
 	static String getUniquePlanId() {
 		return String.format("MY-J-PLAN-%s", UUID.randomUUID().toString().substring(24));
@@ -136,9 +140,13 @@ public class PayjpTest extends BasePayjpTest {
 
 		cardSupportedRequestOptions = RequestOptions.builder().setPayjpVersion("2015-06-23").build();
 
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.YEAR, 3);
+		PayjpTest.three_years_later = String.valueOf(cal.get(Calendar.YEAR));
+
 		defaultCardParams.put("number", "4242424242424242");
 		defaultCardParams.put("exp_month", "02");
-		defaultCardParams.put("exp_year", "2020");
+		defaultCardParams.put("exp_year", PayjpTest.three_years_later);
 		defaultCardParams.put("cvc", "123");
 		defaultCardParams.put("name", "Test Holder");
 		defaultCardParams.put("address_line1", "7-4");
@@ -150,7 +158,7 @@ public class PayjpTest extends BasePayjpTest {
 
 		defaultDebitCardParams.put("number", "4000056655665556");
 		defaultDebitCardParams.put("exp_month", "12");
-		defaultDebitCardParams.put("exp_year", "2020");
+		defaultDebitCardParams.put("exp_year", PayjpTest.three_years_later);
 		defaultDebitCardParams.put("cvc", "123");
 		defaultDebitCardParams.put("name", "J Bindings Debitholder");
 		defaultDebitCardParams.put("address_line1", "140 2nd Street");
@@ -242,17 +250,17 @@ public class PayjpTest extends BasePayjpTest {
 		stubNetwork(Charge.class, "{}");
 		Charge ch = Charge.create(defaultChargeParams);
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("amount", 10);
+		params.put("amount", 50);
 		params.put("refund_reason", "foo bar");
 
-		stubNetwork(Charge.class, "{\"amount_refunded\":10,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
+		stubNetwork(Charge.class, "{\"amount_refunded\":50,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
 		Charge ch_rf = ch.refund(params);
-		Integer ar = 10;
+		Integer ar = 50;
 		assertEquals(ar, ch_rf.getAmountRefunded());
 		assertTrue(ch_rf.getRefunded());
 		assertEquals("foo bar", ch_rf.getRefundReason());
 
-		stubNetwork(Charge.class, "{\"amount_refunded\":10,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
+		stubNetwork(Charge.class, "{\"amount_refunded\":50,\"refunded\":true,\"refund_reason\":\"foo bar\"}");
 		Charge chr = Charge.retrieve(ch.getId());
 		assertEquals(ar, chr.getAmountRefunded());
 		assertTrue(chr.getRefunded());
@@ -271,14 +279,14 @@ public class PayjpTest extends BasePayjpTest {
 		stubNetwork(Charge.class, "{}");
 		Charge ch = Charge.create(defaultChargeParams);
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("amount", 10);
+		params.put("amount", 50);
 		Charge ch_rf = ch.refund(params);
 
-		stubNetwork(Charge.class, "{\"amount_refunded\":10,\"refunded\":true}");
+		stubNetwork(Charge.class, "{\"amount_refunded\":50,\"refunded\":true}");
 		Charge ch_r = Charge.retrieve(ch.getId());
 		assertEquals(ch_rf.getId(), ch_r.getId());
 
-		Integer ar = 10;
+		Integer ar = 50;
 		assertEquals(ar, ch_r.getAmountRefunded());
 		assertTrue(ch_r.getRefunded());
 	}
@@ -314,7 +322,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> invalidCardParams = new HashMap<String, Object>();
 		invalidCardParams.put("number", "4242424242424241");
 		invalidCardParams.put("exp_month", 12);
-		invalidCardParams.put("exp_year", 2015);
+		invalidCardParams.put("exp_year", PayjpTest.three_years_later);
 		invalidChargeParams.put("card", invalidCardParams);
 		stubNetwork(Charge.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"\",\"param\":\"\"}}");
 		Charge.create(invalidChargeParams);
@@ -327,7 +335,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> declinedCardParams = new HashMap<String, Object>();
 		declinedCardParams.put("number", "4000000000000002");
 		declinedCardParams.put("exp_month", "12");
-		declinedCardParams.put("exp_year", "2015");
+		declinedCardParams.put("exp_year", PayjpTest.three_years_later);
 		declinedChargeParams.put("card", declinedCardParams);
 
 		try {
@@ -348,12 +356,12 @@ public class PayjpTest extends BasePayjpTest {
 		declinedCardParams.put("exp_year", "2015");
 		declinedChargeParams.put("card", declinedCardParams);
 
-		stubNetwork(Card.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"expired_card\",\"message\":\"There is no card with ID: 0\",\"param\":\"\"}}");
+		stubNetwork(Card.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"invalid_expiry_year\",\"message\":\"There is no card with ID: 0\",\"param\":\"\"}}");
 		try {
 			Charge.create(declinedChargeParams);
 		}
 		catch (CardException e) {
-			assertEquals("expired_card", e.getCode());
+			assertEquals("invalid_expiry_year", e.getCode());
 		}
 	}
 
@@ -364,7 +372,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> declinedCardParams = new HashMap<String, Object>();
 		declinedCardParams.put("number", "4000000000000890");
 		declinedCardParams.put("exp_month", "12");
-		declinedCardParams.put("exp_year", "2015");
+		declinedCardParams.put("exp_year", PayjpTest.three_years_later);
 		declinedChargeParams.put("card", declinedCardParams);
 
 		try {
@@ -382,7 +390,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> declinedCardParams = new HashMap<String, Object>();
 		declinedCardParams.put("number", "4000000000000123");
 		declinedCardParams.put("exp_month", "12");
-		declinedCardParams.put("exp_year", "2015");
+		declinedCardParams.put("exp_year", PayjpTest.three_years_later);
 		declinedChargeParams.put("card", declinedCardParams);
 
 		try {
@@ -400,7 +408,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> invalidCardParams = new HashMap<String, Object>();
 		invalidCardParams.put("number", "4000000000000070");
 		invalidCardParams.put("exp_month", "12");
-		invalidCardParams.put("exp_year", "2015");
+		invalidCardParams.put("exp_year", PayjpTest.three_years_later);
 		invalidChargeParams.put("card", invalidCardParams);
 		stubNetwork(Charge.class, "{\"paid\":true,\"card\":{\"address_zip_check\":\"failed\",\"object\":\"card\"}}");
 		Charge charge = Charge.create(invalidChargeParams, cardSupportedRequestOptions);
@@ -415,7 +423,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> invalidCardParams = new HashMap<String, Object>();
 		invalidCardParams.put("number", "4000000000000100");
 		invalidCardParams.put("exp_month", "12");
-		invalidCardParams.put("exp_year", "2015");
+		invalidCardParams.put("exp_year", PayjpTest.three_years_later);
 		invalidChargeParams.put("card", invalidCardParams);
 		stubNetwork(Charge.class, "{\"paid\":true,\"card\":{\"cvc_check\":\"failed\",\"object\":\"card\"}}");
 		Charge charge = Charge.create(invalidChargeParams, cardSupportedRequestOptions);
@@ -430,7 +438,7 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> invalidCardParams = new HashMap<String, Object>();
 		invalidCardParams.put("number", "4000000000000150");
 		invalidCardParams.put("exp_month", "12");
-		invalidCardParams.put("exp_year", "2015");
+		invalidCardParams.put("exp_year", PayjpTest.three_years_later);
 		invalidChargeParams.put("card", invalidCardParams);
 		stubNetwork(Charge.class, "{\"paid\":true,\"card\":{\"cvc_check\":\"unavailable\",\"object\":\"card\"}}");
 		Charge charge = Charge.create(invalidChargeParams, cardSupportedRequestOptions);
@@ -497,15 +505,15 @@ public class PayjpTest extends BasePayjpTest {
 
 		Map<String, Object> cardPrams = new HashMap<String, Object>();
 		cardPrams.put("number", "4242424242424242");
-		cardPrams.put("exp_year", 2022);
+		cardPrams.put("exp_year", PayjpTest.three_years_later);
 		cardPrams.put("exp_month", 12);
 		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":null,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		Card addedCard = createdCustomer.createCard(cardPrams);
 
 		Map<String, Object> cardParams_2 = new HashMap<String, Object>();
 		cardParams_2.put("number", "4242424242424242");
-		cardParams_2.put("exp_year", 2021);
-		cardParams_2.put("exp_month", 12);
+		cardParams_2.put("exp_year", PayjpTest.three_years_later);
+		cardParams_2.put("exp_month", 3);
 
 		Map<String, Object> tokenParams = new HashMap<String, Object>();
 		tokenParams.put("card", cardParams_2);
@@ -582,7 +590,7 @@ public class PayjpTest extends BasePayjpTest {
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
 		Map<String, Object> cardPrams = new HashMap<String, Object>();
 		cardPrams.put("number", "4242424242424242");
-		cardPrams.put("exp_year", 2022);
+		cardPrams.put("exp_year", PayjpTest.three_years_later);
 		cardPrams.put("exp_month", 12);
 
 		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":0,\"last4\":null,\"name\":null,\"object\": \"card\"}");
@@ -611,7 +619,8 @@ public class PayjpTest extends BasePayjpTest {
 		stubNetwork(Customer.class, "{\"cards\":{\"count\":0,\"data\":[]}}");
 		Customer customer = Customer.create(defaultCustomerParams, cardSupportedRequestOptions);
 		Map<String, Object> cardParams_2 = defaultCardParams;
-		cardParams_2.put("exp_year", 2022);
+		cardParams_2.put("exp_year", PayjpTest.three_years_later);
+		cardParams_2.put("exp_month", 3);
 		stubNetwork(Card.class, "{\"address_city\":null,\"address_line1\":null,\"address_line2\":null,\"address_state\":null,\"address_zip\":null,\"address_zip_check\":null,\"brand\":null,\"country\":null,\"created\":null,\"customer\":null,\"cvc_check\":null,\"exp_month\":null,\"exp_year\":null,\"fingerprint\":null,\"id\":0,\"last4\":null,\"name\":null,\"object\": \"card\"}");
 		customer.createCard(cardParams_2);
 
@@ -687,6 +696,21 @@ public class PayjpTest extends BasePayjpTest {
 		CustomerCollection Customers = Customer.all(listParams);
 		assertEquals(Customers.getData().size(), 3);
 		assertNotNull(Customers.getData().get(0).getId());
+		assertNull(Customers.getTotalCount());
+	}
+
+	@Test
+	public void testCustomerListWithTotalCount() throws PayjpException {
+		Map<String, Object> listParams = new HashMap<String, Object>();
+		listParams.put("limit", 3);
+		List<String> include = new LinkedList<String>();
+		include.add("total_count");
+		listParams.put("include", include);
+		stubNetwork(CustomerCollection.class, "{\"count\":3,\"total_count\":10,\"data\":[{\"id\":\"1\",\"object\":\"customer\"},{\"object\":\"customer\"},{\"object\":\"customer\"}]}");
+		CustomerCollection Customers = Customer.all(listParams);
+		assertEquals(Customers.getData().size(), 3);
+		assertNotNull(Customers.getData().get(0).getId());
+		assertNotNull(Customers.getTotalCount());
 	}
 
 	@Test
