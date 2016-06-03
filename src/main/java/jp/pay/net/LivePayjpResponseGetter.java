@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.mail.internet.MimeUtility;
+import com.sun.mail.util.BASE64EncoderStream;
 
 import jp.pay.Payjp;
 import jp.pay.exception.APIConnectionException;
@@ -630,7 +630,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		OutputStream  outStream = null;
 
 		try{
-			outStream = MimeUtility.encode(outStreamByte, "base64");
+			outStream = new BASE64EncoderStream(outStreamByte, 256);
 			outStream.write(str.getBytes());
 		}catch (Exception e) {
 			e.printStackTrace();
