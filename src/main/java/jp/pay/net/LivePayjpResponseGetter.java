@@ -23,7 +23,6 @@
  */
 package jp.pay.net;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,14 +41,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.mail.internet.MimeUtility;
-
 import jp.pay.Payjp;
 import jp.pay.exception.APIConnectionException;
 import jp.pay.exception.APIException;
 import jp.pay.exception.AuthenticationException;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.CardException;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	private static final String DNS_CACHE_TTL_PROPERTY_NAME = "networkaddress.cache.ttl";
@@ -83,7 +82,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		headers.put("Accept", "application/json");
 		headers.put("User-Agent",
 				String.format("Payjp/v1 JavaBindings/%s", Payjp.VERSION));
-		headers.put("Authorization", String.format("Basic %s", encodeString((options.getApiKey()+':'))));
+		headers.put("Authorization", String.format("Basic %s", DatatypeConverter.printBase64Binary((options.getApiKey()+':').getBytes())));
 
 		// debug headers
 		String[] propertyNames = { "os.name", "os.version", "os.arch",
@@ -624,30 +623,5 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		}
 	}
 
-	private static String encodeString(String str) {
-		String result = null;
-		ByteArrayOutputStream outStreamByte = new ByteArrayOutputStream();
-		OutputStream  outStream = null;
-
-		try{
-			outStream = MimeUtility.encode(outStreamByte, "base64");
-			outStream.write(str.getBytes());
-		}catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				if (outStream != null) {
-					outStream.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		if (outStreamByte != null) {
-			result = outStreamByte.toString().trim();
-		}
-
-		return result;
-	}
 }
+
