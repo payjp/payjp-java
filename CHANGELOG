@@ -1,3 +1,8 @@
+=== 0.1.1 2016-07-12
+
+* Support metadata parameter for Card, Charge, Plan and Subscription.
+* Fix api call fails with longer api key.
+
 === 0.1.0 2015-06-23
 
 * Delete unuse source, add README.md and RequestExample.md.
