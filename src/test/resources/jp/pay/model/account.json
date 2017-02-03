@@ -1,8 +1,4 @@
 {
-  "accounts_enabled": [
-    "merchant",
-    "customer"
-  ],
   "created": 1432965397,
   "customer": {
     "cards": {
@@ -33,8 +29,6 @@
       "url": "/v1/accounts/cards"
     },
     "created": 1432965397,
-    "default_card": null,
-    "description": "user customer",
     "email": null,
     "id": "acct_cus_38153121efdb7964dd1e147",
     "object": "customer"

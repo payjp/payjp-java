@@ -36,9 +36,7 @@ import jp.pay.net.RequestOptions;
 
 public class Account extends APIResource {
 	String id;
-	List<String> accountsEnabled;
 	Long created;
-	Customer customer;
 	String email;
 	Merchant merchant;
 
@@ -46,16 +44,8 @@ public class Account extends APIResource {
 		return id;
 	}
 
-	public List<String> getAccountsEnabled() {
-		return accountsEnabled;
-	}
-
 	public Long getCreated() {
 		return created;
-	}
-
-	public Customer getCustomer() {
-		return customer;
 	}
 
 	public String getEmail() {
