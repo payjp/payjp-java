@@ -1,3 +1,8 @@
+=== 0.2.0 2017-02-06
+
+* Delete Account.getCustommer
+* Delete Account.getAccountsEnabled
+
 === 0.1.1 2016-07-12
 
 * Support metadata parameter for Card, Charge, Plan and Subscription.
