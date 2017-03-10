@@ -1,0 +1,40 @@
+{
+    "created": 1440666866,
+    "email": "master@pay.jp",
+    "id": "acct_3e3a48671dbba45ac1907f76823",
+    "merchant": {
+        "bank_enabled": false,
+        "brands_accepted": [
+            "Visa",
+            "MasterCard",
+            "JCB",
+            "American Express",
+            "Discover"
+        ],
+        "business_type": "company",
+        "charge_type": [
+            "charge",
+            "subscription"
+        ],
+        "contact_phone": "09000000000",
+        "country": "JP",
+        "created": 1440666866,
+        "currencies_supported": [
+            "jpy"
+        ],
+        "default_currency": "jpy",
+        "details_submitted": true,
+        "id": "acct_mch_8b1101eeedcfb0d43b2833a",
+        "livemode_activated_at": 1443144245,
+        "livemode_enabled": true,
+        "object": "merchant",
+        "product_detail": "PAY.JP関連グッズなど",
+        "product_name": "PAY.JP",
+        "product_type": [
+            "goods"
+        ],
+        "site_published": false,
+        "url": "https://pay.jp"
+    },
+    "object": "account"
+}
