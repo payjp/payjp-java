@@ -71,7 +71,7 @@ public class Account extends APIResource {
 		Boolean bankEnabled;
 		List<String> brandsAccepted;
 		String businessType;
-		String chargeType;
+		List<String> chargeType;
 		String contactPhone;
 		String country;
 		Long created;
@@ -83,7 +83,7 @@ public class Account extends APIResource {
 		Boolean livemodeEnabled;
 		String productDetail;
 		String productName;
-		String productType;
+		List<String> productType;
 		Boolean sitePublished;
 		String url;
 
@@ -99,7 +99,7 @@ public class Account extends APIResource {
 			return businessType;
 		}
 
-		public String getChargeType() {
+		public List<String> getChargeType() {
 			return chargeType;
 		}
 
@@ -147,7 +147,7 @@ public class Account extends APIResource {
 			return productName;
 		}
 
-		public String getProductType() {
+		public List<String> getProductType() {
 			return productType;
 		}
 
