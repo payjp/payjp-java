@@ -102,6 +102,60 @@ public class AccountTest extends BasePayjpTest {
     }
 
     @Test
+    public void testDeserializeForDetailsSubmitted() throws PayjpException, IOException {
+        String json = resource("account_details_submitted.json");
+        Account acc = APIResource.GSON.fromJson(json, Account.class);
+
+        assertEquals("acct_3e3a48671dbba45ac1907f76823", acc.getId());
+
+        Long created = 1440666866l;
+        assertEquals(created, acc.getCreated());
+
+        assertEquals(false, acc.getMerchant().getBankEnabled());
+
+        LinkedList<String> mba = new LinkedList<String>();
+        mba.add("Visa");
+        mba.add("MasterCard");
+        mba.add("JCB");
+        mba.add("American Express");
+        mba.add("Discover");
+        assertEquals(mba, acc.getMerchant().getBrandsAccepted());
+
+        assertEquals("company", acc.getMerchant().getBusinessType());
+        LinkedList<String> ct = new LinkedList<String>();
+        ct.add("charge");
+        ct.add("subscription");
+        assertEquals(ct, acc.getMerchant().getChargeType());
+        assertEquals("09000000000", acc.getMerchant().getContactPhone());
+        assertEquals("JP", acc.getMerchant().getCountry());
+
+        Long mc = 1440666866l;
+        assertEquals(mc, acc.getMerchant().getCreated());
+
+        LinkedList<String> mcs = new LinkedList<String>();
+        mcs.add("jpy");
+        assertEquals(mcs, acc.getMerchant().getCurrenciesSupported());
+
+        assertEquals("jpy", acc.getMerchant().getDefaultCurrency());
+        assertEquals(true, acc.getMerchant().getDetailsSubmitted());
+        assertEquals("acct_mch_8b1101eeedcfb0d43b2833a", acc.getMerchant().getId());
+
+        Long mla = 1443144245l;
+        assertEquals(mla, acc.getMerchant().getLivemodeActivatedAt());
+
+        assertEquals(true, acc.getMerchant().getLivemodeEnabled());
+        assertEquals("PAY.JP関連グッズなど", acc.getMerchant().getProductDetail());
+        assertEquals("PAY.JP", acc.getMerchant().getProductName());
+
+        LinkedList<String> pt = new LinkedList<String>();
+        pt.add("goods");
+        assertEquals(pt, acc.getMerchant().getProductType());
+
+        assertEquals(false, acc.getMerchant().getSitePublished());
+        assertEquals("https://pay.jp", acc.getMerchant().getUrl());
+    }
+
+    @Test
     public void testRetrieve() throws PayjpException {
         Account.retrieve();
 
