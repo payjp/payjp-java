@@ -50,6 +50,8 @@ public class Card extends ExternalAccount implements MetadataStore<Card> {
 	String last4;
 	Boolean livemode;
 	String name;
+	String issuingCountry;
+
 	Map<String, String> metadata = new HashMap<String, String>();
 
 	public Card update(Map<String, Object> params)
