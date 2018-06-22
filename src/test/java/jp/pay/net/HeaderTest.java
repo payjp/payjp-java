@@ -25,11 +25,15 @@ package jp.pay.net;
 
 import jp.pay.Payjp;
 import jp.pay.exception.PayjpException;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class HeaderTest {
 
@@ -48,4 +52,21 @@ public class HeaderTest {
         }
     }
 
+    @Test
+    public void testAdditionalHeader() throws Exception {
+        Map<String, String> additionalHeaders = new LinkedHashMap<String, String>();
+        additionalHeaders.put("X-Payjp-Direct-Token-Generate", "true");
+        additionalHeaders.put("X-Payjp-Foo-Key", "bar");
+        RequestOptions options = RequestOptions.builder()
+                .setApiKey("sk_live_fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+                .setPayjpAccount("ac_fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+                .setAdditionalHeaders(additionalHeaders)
+                .build();
+
+        Map<String, String> headers = LivePayjpResponseGetter.getHeaders(options);
+        assertEquals("application/json", headers.get("Accept"));
+        assertEquals("ac_fffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", headers.get("Payjp-Account"));
+        assertEquals("true", headers.get("X-Payjp-Direct-Token-Generate"));
+        assertEquals("bar", headers.get("X-Payjp-Foo-Key"));
+    }
 }

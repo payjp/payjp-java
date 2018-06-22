@@ -25,21 +25,26 @@ package jp.pay.net;
 
 import jp.pay.Payjp;
 
+import java.util.Map;
+
 public class RequestOptions {
 	public static RequestOptions getDefault() {
-		return new RequestOptions(Payjp.apiKey, Payjp.apiVersion, null, null);
+		return new RequestOptions(Payjp.apiKey, Payjp.apiVersion, null, null, null);
 	}
 
 	private final String apiKey;
 	private final String payjpVersion;
 	private final String idempotencyKey;
 	private final String payjpAccount;
+	private final Map<String, String> additionalHeaders;
 
-	private RequestOptions(String apiKey, String payjpVersion, String idempotencyKey, String payjpAccount) {
+	private RequestOptions(String apiKey, String payjpVersion, String idempotencyKey, String payjpAccount,
+						   Map<String, String> additionalHeaders) {
 		this.apiKey = apiKey;
 		this.payjpVersion = payjpVersion;
 		this.idempotencyKey = idempotencyKey;
 		this.payjpAccount = payjpAccount;
+		this.additionalHeaders = additionalHeaders;
 	}
 
 	public String getApiKey() {
@@ -58,6 +63,10 @@ public class RequestOptions {
 		return payjpAccount;
 	}
 
+	public Map<String, String> getAdditionalHeaders() {
+		return additionalHeaders;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -74,6 +83,9 @@ public class RequestOptions {
 		if (payjpVersion != null ? !payjpVersion.equals(that.payjpVersion) : that.payjpVersion != null) {
 			return false;
 		}
+		if (additionalHeaders != null ? !additionalHeaders.equals(that.additionalHeaders) : that.additionalHeaders != null) {
+			return false;
+		}
 
 		return true;
 	}
@@ -83,6 +95,7 @@ public class RequestOptions {
 		int result = apiKey != null ? apiKey.hashCode() : 0;
 		result = 31 * result + (payjpVersion != null ? payjpVersion.hashCode() : 0);
 		result = 31 * result + (idempotencyKey != null ? idempotencyKey.hashCode() : 0);
+		result = 31 * result + (additionalHeaders != null ? additionalHeaders.hashCode() : 0);
 		return result;
 	}
 
@@ -91,7 +104,7 @@ public class RequestOptions {
 	}
 
 	public RequestOptionsBuilder toBuilder() {
-		return new RequestOptionsBuilder().setApiKey(this.apiKey).setPayjpVersion(this.payjpVersion).setPayjpAccount(this.payjpAccount);
+		return new RequestOptionsBuilder().setApiKey(this.apiKey).setPayjpVersion(this.payjpVersion).setPayjpAccount(this.payjpAccount).setAdditionalHeaders(this.additionalHeaders);
 	}
 
 	public static final class RequestOptionsBuilder {
@@ -99,6 +112,7 @@ public class RequestOptions {
 		private String payjpVersion;
 		private String idempotencyKey;
 		private String payjpAccount;
+		private Map<String, String> additionalHeaders;
 
 		public RequestOptionsBuilder() {
 			this.apiKey = Payjp.apiKey;
@@ -156,12 +170,26 @@ public class RequestOptions {
 			return setPayjpAccount(null);
 		}
 
+		public Map<String, String> getAdditionalHeaders() {
+			return additionalHeaders;
+		}
+
+		public RequestOptionsBuilder setAdditionalHeaders(Map<String, String> additionalHeaders) {
+			this.additionalHeaders = additionalHeaders;
+			return this;
+		}
+
+		public RequestOptionsBuilder clearAdditionalHeaders() {
+			return setAdditionalHeaders(null);
+		}
+
 		public RequestOptions build() {
 			return new RequestOptions(
 				normalizeApiKey(this.apiKey),
 				normalizePayjpVersion(this.payjpVersion),
 				normalizeIdempotencyKey(this.idempotencyKey),
-				normalizePayjpAccount(this.payjpAccount));
+				normalizePayjpAccount(this.payjpAccount),
+				additionalHeaders);
 		}
 	}
 
