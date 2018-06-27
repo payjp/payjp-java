@@ -105,6 +105,9 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		if (options.getPayjpAccount() != null) {
 			headers.put("Payjp-Account", options.getPayjpAccount());
 		}
+		if (options.getAdditionalHeaders() != null) {
+			headers.putAll(options.getAdditionalHeaders());
+		}
 		return headers;
 	}
 
