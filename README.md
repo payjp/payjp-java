@@ -18,7 +18,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>jp.pay</groupId>
   <artifactId>payjp-java</artifactId>
-  <version>0.2.1</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "jp.pay:payjp-java:0.2.1"
+compile "jp.pay:payjp-java:0.3.0"
 ```
 
 ### Others

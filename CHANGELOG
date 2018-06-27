@@ -1,3 +1,7 @@
+=== 0.3.0 2018-06-27
+
+* Add interface for additional http headers
+
 === 0.2.1 2017-03-10
 
 * Fix bug Account.retrieve()
