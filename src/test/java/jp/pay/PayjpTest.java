@@ -1,17 +1,17 @@
 /*
  * Copyright (c) 2010-2011 Stripe (http://stripe.com)
  * Copyright (c) 2015 Base, Inc. (http://binc.jp/)
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -31,13 +31,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import jp.pay.Payjp;
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.PayjpException;
 import jp.pay.model.Account;
@@ -64,7 +62,6 @@ import jp.pay.model.TransferChargeCollection;
 import jp.pay.model.TransferCollection;
 import jp.pay.net.APIResource;
 import jp.pay.net.LivePayjpResponseGetter;
-import jp.pay.net.PayjpResponseGetter;
 import jp.pay.net.RequestOptions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -93,14 +90,6 @@ public class PayjpTest extends BasePayjpTest {
 		uniqueParams.putAll(defaultPlanParams);
 		uniqueParams.put("id", getUniquePlanId());
 		return uniqueParams;
-	}
-
-	static Customer createDefaultCustomerWithPlan(Plan plan)
-			throws PayjpException {
-		Map<String, Object> customerWithPlanParams = new HashMap<String, Object>();
-		customerWithPlanParams.putAll(defaultCustomerParams);
-		customerWithPlanParams.put("plan", plan.getId());
-		return Customer.create(customerWithPlanParams);
 	}
 
 	static Map<String, Object> getSubscriptionParams() throws PayjpException {
@@ -143,6 +132,7 @@ public class PayjpTest extends BasePayjpTest {
 		defaultCardParams.put("name", "Test Holder");
 		defaultCardParams.put("address_line1", "7-4");
 		defaultCardParams.put("address_line2", "203");
+
 		defaultCardParams.put("address_city", "\u8d64\u5742");
 		defaultCardParams.put("address_zip", "1500011");
 		defaultCardParams.put("address_state", "\u6e2f\u533a");
@@ -661,22 +651,12 @@ public class PayjpTest extends BasePayjpTest {
 	public void testCustomerSubscriptionRetrieve() throws PayjpException {
 		stubNetwork(Customer.class, "{\"id\":\"1\",\"subscriptions\":{\"count\":0,\"data\":[]}}");
 		Customer customer = Customer.create(defaultCustomerParams);
-		stubNetwork(Plan.class, "{\"id\":\"1\"}");
-		Plan plan = Plan.create(getUniquePlanParams());
-
-		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
-		subscriptionParams.put("plan", plan.getId());
-		subscriptionParams.put("customer", customer.getId());
-
 		stubNetwork(Subscription.class, "{\"id\":1,\"customer\":\"1\",\"plan\":{\"id\":1}}");
-		Subscription subscription = Subscription.create(subscriptionParams);
+		Subscription subscription_retrieve = customer.getSubscriptions().retrieve("1");
 
-		stubNetwork(Subscription.class, "{\"id\":1,\"customer\":\"1\",\"plan\":{\"id\":1}}");
-		Subscription subscription_retrieve = customer.getSubscriptions().retrieve(subscription.getId());
-
-		assertEquals(subscription.getId(), subscription_retrieve.getId());
-		assertEquals(subscription.getCustomer(), customer.getId());
-		assertEquals(subscription.getPlan().getId(), plan.getId());
+		assertEquals("1", subscription_retrieve.getId());
+		assertEquals("1", customer.getId());
+		assertEquals("1", subscription_retrieve.getPlan().getId());
 	}
 
 	@Test
@@ -691,46 +671,47 @@ public class PayjpTest extends BasePayjpTest {
 
 	@Test
 	public void testSubscriptionCreate() throws PayjpException {
-		stubNetwork(Plan.class, "{\"id\":1}");
-		Plan plan = Plan.create(getUniquePlanParams());
-		stubNetwork(Customer.class, "{}");
-		Customer customer = Customer.create(defaultCustomerParams);
 		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
-		subscriptionParams.put("plan", plan.getId());
-		subscriptionParams.put("customer", customer.getId());
+		subscriptionParams.put("plan", "pln_1");
+		subscriptionParams.put("customer", "cus_1");
 
-		stubNetwork(Subscription.class, "{\"status\":\"active\",\"plan\":{\"id\":\"1\"}}");
+		stubNetwork(Subscription.class, "{\"id\":1,\"customer\":\"cus_1\",\"plan\":{\"id\":\"pln_1\"},\"next_cycle_plan\":null}");
 		Subscription subscription = Subscription.create(subscriptionParams);
 
 		assertEquals(null, subscription.getCanceledAt());
 		assertEquals(null, subscription.getPausedAt());
 		assertEquals(null, subscription.getResumedAt());
-		assertEquals("active", subscription.getStatus());
-		assertEquals(plan.getId(), subscription.getPlan().getId());
-		assertEquals(customer.getId(), subscription.getCustomer());
+		assertEquals("pln_1", subscription.getPlan().getId());
+		assertEquals(null, subscription.getNextCyclePlan());
+		assertEquals("cus_1", subscription.getCustomer());
+	}
+
+	@Test
+	public void testSubscriptionUpdate() throws PayjpException {
+		stubNetwork(Subscription.class, "{\"next_cycle_plan\":null,\"plan\":{\"id\":\"pln_1\"},\"customer\":\"cus_1\"}");
+		Subscription subscription = Subscription.retrieve("1");
+
+		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
+		subscriptionParams.put("next_cycle_plan", "pln_2");
+		stubNetwork(Subscription.class, "{\"next_cycle_plan\":{\"id\":\"pln_2\"},\"plan\":{\"id\":\"pln_1\"},\"customer\":\"cus_1\"}");
+		Subscription res = subscription.update(subscriptionParams);
+		assertEquals("pln_1", res.getPlan().getId());
+		assertEquals("pln_2", res.getNextCyclePlan().getId());
+		assertEquals("cus_1", res.getCustomer());
 	}
 
 	@Test
 	public void testSubscriptionRetrieve() throws PayjpException {
-		stubNetwork(Plan.class, "{\"id\":\"1\"}");
-		Plan plan = Plan.create(getUniquePlanParams());
-		stubNetwork(Customer.class, "{}");
-		Customer customer = Customer.create(defaultCustomerParams);
-		Map<String, Object> subscriptionParams = new HashMap<String, Object>();
-		subscriptionParams.put("plan", plan.getId());
-		subscriptionParams.put("customer", customer.getId());
+		stubNetwork(Subscription.class, "{\"status\":\"active\",\"next_cycle_plan\":null,\"plan\":{\"id\":\"pln_1\"},\"customer\":\"cus_1\"}");
+		Subscription subscription = Subscription.retrieve("1");
 
-		stubNetwork(Subscription.class, "{}");
-		Subscription createdSubscription = Subscription.create(subscriptionParams);
-
-		stubNetwork(Subscription.class, "{\"status\":\"active\",\"plan\":{\"id\":\"1\"}}");
-		Subscription subscription = Subscription.retrieve(createdSubscription.getId());
 		assertEquals(null, subscription.getCanceledAt());
 		assertEquals(null, subscription.getPausedAt());
 		assertEquals(null, subscription.getResumedAt());
 		assertEquals("active", subscription.getStatus());
-		assertEquals(plan.getId(), subscription.getPlan().getId());
-		assertEquals(customer.getId(), subscription.getCustomer());
+		assertEquals("pln_1", subscription.getPlan().getId());
+		assertEquals(null, subscription.getNextCyclePlan());
+		assertEquals("cus_1", subscription.getCustomer());
 	}
 
 	@Test

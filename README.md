@@ -47,6 +47,8 @@ If you're planning on using ProGuard, make sure that you exclude the Payjp bindi
 Usage
 =====
 
+In advance, you need to get token by [Checkout](https://pay.jp/docs/checkout).
+
 PayjpExample.java
 
 ```java
@@ -65,16 +67,12 @@ public class PayjpExample {
         Map<String, Object> chargeMap = new HashMap<String, Object>();
         chargeMap.put("amount", 3500);
         chargeMap.put("currency", "jpy");
-        Map<String, Object> cardMap = new HashMap<String, Object>();
-        cardMap.put("number", "4242424242424242");
-        cardMap.put("exp_month", 12);
-        cardMap.put("exp_year", 2020);
-        chargeMap.put("card", cardMap);
+        chargeMap.put("card", "your_token_id");
         try {
-            Charge charge = Charge.create(chargeMap
-);
+            Charge charge = Charge.create(chargeMap);
             System.out.println(charge);
         } catch (PayjpException e) {
+            System.out.println(e.message);
             e.printStackTrace();
         }
     }

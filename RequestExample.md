@@ -7,15 +7,9 @@
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
-	Map<String, Object> cardParams = new HashMap<String, Object>();
-	
-	cardParams.put("number", "4242424242424242");
-	cardParams.put("exp_year", "2020");
-	cardParams.put("exp_month", "02");
-	
 	Map<String, Object> chargeParams = new HashMap<String, Object>();
 
-	chargeParams.put("card", cardParams);
+	chargeParams.put("card", "your_token");
 	chargeParams.put("amount", 3500);
 	chargeParams.put("currency", "jpy");
 	
@@ -102,20 +96,6 @@
 	customerParams.put("offset", 10);
 	
 	Customer.all(customerParams);
-
-###post顧客のカードを作成
-
-	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
-	
-	Customer cu = Customer.retrieve("cus_4df4b5ed720933f4fb9e28857517");
-	
-	Map<String, Object> cardParams = new HashMap<String, Object>();
-	
-	cardParams.put("number", "4242424242424242");
-	cardParams.put("exp_year", "2020");
-	cardParams.put("exp_month", "02");
-	
-	cu.createCard(cardParams);
 
 ###get顧客のカード情報を取得
 
@@ -248,8 +228,9 @@
 
 	Map<String, Object> updateParams = new HashMap<String, Object>();
 	updateParams.put("plan", "pln_68e6a67f582462c223ca693bc549");
+	updateParams.put("next_cycle_plan", null); // null -> empty string
 	
-	su.update(updateParams);
+	su = su.update(updateParams);
 
 ###post定期購入を停止
 
@@ -289,21 +270,6 @@
 	Subscription.all(listParams);
 
 ##トークン (TOKENS)
-
-###postトークンを作成
-
-	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
-	
-	Map<String, Object> tokenParams = new HashMap<String, Object>();
-	Map<String, Object> cardParams = new HashMap<String, Object>();
-	cardParams.put("number", "4242424242424242");
-	cardParams.put("exp_month", "02");
-	cardParams.put("exp_year", "2020");
-	cardParams.put("cvc", "314");
-	tokenParams.put("card", cardParams);
-	
-	Token.create(tokenParams);
-
 ###getトークン情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
