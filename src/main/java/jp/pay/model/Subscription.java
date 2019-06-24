@@ -45,6 +45,7 @@ public class Subscription extends APIResource implements MetadataStore<Subscript
 	Boolean livemode;
 	Long pausedAt;
 	Plan plan;
+	Plan nextCyclePlan;
 	Long resumedAt;
 	Long start;
 	String status;
@@ -228,8 +229,14 @@ public class Subscription extends APIResource implements MetadataStore<Subscript
 	public Plan getPlan() {
 		return plan;
 	}
+	public Plan getNextCyclePlan() {
+		return this.nextCyclePlan;
+	}
 	public void setPlan(Plan plan) {
 		this.plan = plan;
+	}
+	public void setNextCyclePlan(Plan plan) {
+		this.nextCyclePlan = plan;
 	}
 	public Long getCanceledAt() {
 		return canceledAt;

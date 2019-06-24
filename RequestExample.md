@@ -228,8 +228,9 @@
 
 	Map<String, Object> updateParams = new HashMap<String, Object>();
 	updateParams.put("plan", "pln_68e6a67f582462c223ca693bc549");
+	updateParams.put("next_cycle_plan", null); // null -> empty string
 	
-	su.update(updateParams);
+	su = su.update(updateParams);
 
 ###post定期購入を停止
 
