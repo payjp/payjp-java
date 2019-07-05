@@ -56,23 +56,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jp.pay.Payjp;
-import jp.pay.exception.PayjpException;
 import jp.pay.model.Charge;
 import jp.pay.net.RequestOptions;
 
 public class PayjpExample {
 
     public static void main(String[] args) {
-        Payjp.apikey = "sk_test_c62fade9d045b54cd76d7036";
+        Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
         Map<String, Object> chargeMap = new HashMap<String, Object>();
         chargeMap.put("amount", 3500);
         chargeMap.put("currency", "jpy");
-        chargeMap.put("card", "your_token_id");
+        chargeMap.put("card", "<your_token_id>");
         try {
             Charge charge = Charge.create(chargeMap);
             System.out.println(charge);
-        } catch (PayjpException e) {
-            System.out.println(e.message);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
