@@ -495,7 +495,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 					String.format(
 							"IOException during API request to Payjp (%s): %s "
 									+ "Please check your internet connection and try again. If this problem persists,"
-									+ "you should check Payjp's service status at https://twitter.com/payjpstatus,"
+									+ "you should check Payjp's service status at https://status.pay.jp"
 									+ " or let us know at support@pay.jp.",
 							Payjp.getApiBase(), e.getMessage()), e);
 		} finally {
