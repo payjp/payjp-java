@@ -1,3 +1,7 @@
+=== 0.4.1 2019-07-22
+
+* Update [status page URL](https://status.pay.jp)
+
 === 0.4.0 2019-07-05
 
 * Add [subscription.next_cycle_plan](https://pay.jp/docs/api/#subscription-%E5%AE%9A%E6%9C%9F%E8%AA%B2%E9%87%91)
