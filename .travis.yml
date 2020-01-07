@@ -1,8 +1,13 @@
 language: java
 
+addons:
+  apt:
+    packages:
+      - openjdk-6-jdk
+      - openjdk-7-jdk
+
 jdk:
-  # https://github.com/travis-ci/travis-ci/issues/8199
-  # - openjdk6
+  - openjdk6
   - openjdk7
   # https://github.com/travis-ci/travis-ci/issues/7884
   #- oraclejdk7
