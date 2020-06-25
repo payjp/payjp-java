@@ -1,9 +1,8 @@
-#Payjp-java Request Example
+# Payjp-java Request Example
 
+## 支払い(Charges)
 
-##支払い(Charges)
-
-###post支払いを作成
+### post支払いを作成
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -15,13 +14,13 @@
 	
 	Charge.create(chargeParams);
 
-###get支払い情報を取得
+### get支払い情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Charge.retrieve("ch_fa990a4c10672a93053a774730b0a");
 
-###post支払い情報を更新
+### post支払い情報を更新
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -31,22 +30,22 @@
 	
 	ch.update(updateParams);
 
-###post返金する
+### post返金する
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Charge ch = Charge.retrieve("ch_fa990a4c10672a93053a774730b0a");
 	ch.refund();
 
-###post支払い処理を確定する
+### post支払い処理を確定する
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Charge ch = Charge.retrieve("ch_fa990a4c10672a93053a774730b0a");
 	ch.capture();
 
-###get支払いリストを取得
-	
+### get支払いリストを取得
+
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Map<String, Object> chargeParams = new HashMap<String, Object>();
@@ -55,9 +54,9 @@
 	
 	Charge.all(chargeParams);
 
-##顧客 (CUSTOMERS)
+## 顧客 (CUSTOMERS)
 
-###post顧客を作成
+### post顧客を作成
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -66,28 +65,28 @@
 
 	Customer.create(customerParams);
 
-###get顧客情報を取得
+### get顧客情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Customer.retrieve("cus_121673955bd7aa144de5a8f6c262");
 
-###post顧客情報を更新
+### post顧客情報を更新
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Customer cu = Customer.retrieve("cus_121673955bd7aa144de5a8f6c262");
 	Map<String, Object> updateParams = new HashMap<String, Object>();
 	updateParams.put("email", "added@email.com");
-	
-###delete顧客を削除
+
+### delete顧客を削除
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Customer cu = Customer.retrieve("cus_121673955bd7aa144de5a8f6c262");
 	cu.delete();
 
-###get顧客リストを取得
+### get顧客リストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -97,14 +96,14 @@
 	
 	Customer.all(customerParams);
 
-###get顧客のカード情報を取得
+### get顧客のカード情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
 	Customer cu = Customer.retrieve("cus_4df4b5ed720933f4fb9e28857517");
 	cu.getCards().retrieve("car_f7d9fa98594dc7c2e42bfcd641ff");
 
-###post顧客のカードを更新
+### post顧客のカードを更新
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -117,8 +116,8 @@
 	updateParams.put("exp_month", "05");
 	
 	ca.update(updateParams);
-	
-###delete顧客のカードを削除
+
+### delete顧客のカードを削除
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -127,7 +126,7 @@
 
 	ca.delete();
 
-###get顧客のカードリストを取得
+### get顧客のカードリストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -137,14 +136,14 @@
 	
 	Customer.retrieve("cus_4df4b5ed720933f4fb9e28857517").getCards().all(listParams);
 
-###get顧客の定期購入情報を取得
+### get顧客の定期購入情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
 	Customer cu = Customer.retrieve("cus_4df4b5ed720933f4fb9e28857517");
 	cu.getSubscriptions().retrieve("sub_567a1e44562932ec1a7682d746e0");
 
-###get顧客の定期購入リストを取得
+### get顧客の定期購入リストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -155,9 +154,9 @@
 	
 	cu.getSubscriptions().all(listParams);
 
-##プラン (PLANS)
+## プラン (PLANS)
 
-###postプランを作成
+### postプランを作成
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -169,13 +168,13 @@
 	
 	Plan.create(planParams);
 
-###getプラン情報を取得
+### getプラン情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
 	Plan.retrieve("pln_45dd3268a18b2837d52861716260");
 
-###postプランを更新
+### postプランを更新
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -186,14 +185,14 @@
 
 	p.update(updateParams);
 
-###deleteプランを削除
+### deleteプランを削除
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
 	Plan p = Plan.retrieve("pln_45dd3268a18b2837d52861716260");
 	p.delete();
 
-###getプランリストを取得
+### getプランリストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -202,9 +201,9 @@
 
 	Plan.all(listParams);
 
-##定期購入 (SUBSCRIPTIONS)
+## 定期購入 (SUBSCRIPTIONS)
 
-###post定期購入を作成
+### post定期購入を作成
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -214,13 +213,13 @@
 		
 	Subscription.create(subscriptionParams);
 
-###get定期購入情報を取得
+### get定期購入情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Subscription.retrieve("sub_567a1e44562932ec1a7682d746e0");
 
-###post定期購入を更新
+### post定期購入を更新
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -232,35 +231,35 @@
 	
 	su = su.update(updateParams);
 
-###post定期購入を停止
+### post定期購入を停止
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Subscription su = Subscription.retrieve("sub_567a1e44562932ec1a7682d746e0");
 	su.pause();
 
-###post定期購入を再開
+### post定期購入を再開
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Subscription su = Subscription.retrieve("sub_567a1e44562932ec1a7682d746e0");
 	su.resume();
 
-###post定期購入をキャンセル
+### post定期購入をキャンセル
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Subscription su = Subscription.retrieve("sub_567a1e44562932ec1a7682d746e0");
 	su.cancel();
 
-###delete定期購入を削除
+### delete定期購入を削除
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Subscription su = Subscription.retrieve("sub_567a1e44562932ec1a7682d746e0");
 	su.delete();
 
-###get定期購入のリストを取得
+### get定期購入のリストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -269,22 +268,23 @@
 
 	Subscription.all(listParams);
 
-##トークン (TOKENS)
-###getトークン情報を取得
+## トークン (TOKENS)
+
+### getトークン情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
 	Token.retrieve("tok_eff34b780cbebd61e87f09ecc9c6");
 
-##入金 (TRANSFERS)
+## 入金 (TRANSFERS)
 
-###get入金情報を取得
+### get入金情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
 	Transfer.retrieve("tr_8f0c0fe2c9f8a47f9d18f03959ba1");
 
-###get入金リストを取得
+### get入金リストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -293,7 +293,7 @@
 
 	Transfer.all(listParams);
 
-###get入金の内訳を取得
+### get入金の内訳を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
@@ -304,15 +304,15 @@
 	
 	tr.getCharges.all(listParams);
 
-##イベント (EVENTS)
+## イベント (EVENTS)
 
-###getイベント情報を取得
+### getイベント情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
 	Event.retrieve("evnt_2f7436fe0017098bc8d22221d1e");
 
-###getイベントリストを取得
+### getイベントリストを取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 	
@@ -322,9 +322,9 @@
 
 	Event.all(listParams);
 
-##アカウント (ACCOUNTS)
+## アカウント (ACCOUNTS)
 
-###getアカウント情報を取得
+### getアカウント情報を取得
 
 	Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
 
