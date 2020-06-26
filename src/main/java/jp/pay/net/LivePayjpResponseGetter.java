@@ -510,9 +510,8 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		Error error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
 		switch (rCode) {
 		case 400:
-			throw new InvalidRequestException(error.message, error.param, error.type, error.code);
 		case 404:
-			throw new InvalidRequestException(error.message, error.param);
+			throw new InvalidRequestException(error.message, error.param, error.type, error.code);
 		case 401:
 			throw new AuthenticationException(error.message);
 		case 402:

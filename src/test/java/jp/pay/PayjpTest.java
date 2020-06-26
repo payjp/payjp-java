@@ -38,6 +38,8 @@ import java.util.UUID;
 
 import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.PayjpException;
+import jp.pay.exception.AuthenticationException;
+import jp.pay.exception.APIException;
 import jp.pay.model.Account;
 import jp.pay.model.Card;
 import jp.pay.model.Charge;
@@ -166,6 +168,18 @@ public class PayjpTest extends BasePayjpTest {
 		defaultPlanParams.put("name", "J Bindings Plan");
 	}
 
+	@Test(expected=AuthenticationException.class)
+	public void testAuthenticationException() throws PayjpException {
+		stubNetwork(Customer.class, 401, "{\"error\":{\"type\":\"auth_error\",\"message\":\"Invalid API Key: sk_test_***\",\"status\":401}}");
+		Charge.create(defaultChargeParams);
+	}
+
+	@Test(expected=APIException.class)
+	public void testAPIException() throws PayjpException {
+		stubNetwork(Customer.class, 500, "{\"error\":{\"type\":\"server_error\",\"message\":\"xxx\",\"status\":500}}");
+		Charge.create(defaultChargeParams);
+	}
+
 	@Test
 	public void testChargeCreate() throws PayjpException {
 		stubNetwork(Charge.class, "{\"refunded\":false,\"paid\":true}");
@@ -199,17 +213,35 @@ public class PayjpTest extends BasePayjpTest {
 		assertEquals(charge.getId(), charges.getData().get(0).getId());
 	}
 
-	@Test
-	public void testChargeRetrieveNullId() throws PayjpException {
-		stubNetwork(Card.class, 400, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"\",\"param\":\"\"}}");
-		try {
-			Charge.retrieve(null);
-			assertTrue(false);
-		}
-		catch (InvalidRequestException e) {
-			// Expected
-		}
-	}
+    @Test
+    public void testChargeRetrieveNullId() throws PayjpException {
+        stubNetwork(Card.class, 404, "{\"error\":{\"type\":\"client_error\",\"message\":\"Unrecognized request URL: GET /v1/charges/\",\"status\":404}}");
+        try {
+            Charge.retrieve(null);
+            assertTrue(false);
+        }
+        catch (InvalidRequestException e) {
+            assertEquals("Unrecognized request URL: GET /v1/charges/", e.getMessage());
+            assertEquals("client_error", e.getType());
+            assertEquals(null, e.getCode());
+            assertEquals(null, e.getParam());
+        }
+    }
+
+    @Test
+    public void testChargeRetrieveInvalidId() throws PayjpException {
+        stubNetwork(Card.class, 404, "{\"error\":{\"type\":\"client_error\",\"code\":\"invalid_id\",\"message\":\"No such charge: hoge\",\"param\":\"id\",\"status\":404}}");
+        try {
+            Charge.retrieve("hoge");
+            assertTrue(false);
+        }
+        catch (InvalidRequestException e) {
+            assertEquals("No such charge: hoge", e.getMessage());
+            assertEquals("client_error", e.getType());
+            assertEquals("invalid_id", e.getCode());
+            assertEquals("id", e.getParam());
+        }
+    }
 
 	@Test
 	public void testChargeUpdate() throws PayjpException {
@@ -768,12 +800,14 @@ public class PayjpTest extends BasePayjpTest {
 		Map<String, Object> cancelParams = new HashMap<String, Object>();
 		cancelParams.put("foo", "bar");
 
-		stubNetwork(Subscription.class, 400, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"Parameters are not allowed: /v1/subscriptions/1/cancel\",\"param\":\"\"}}");
+		stubNetwork(Subscription.class, 400, "{\"error\":{\"type\":\"test_type\",\"code\":\"test_code\",\"message\":\"Parameters are not allowed: /v1/subscriptions/1/cancel\",\"param\":\"\"}}");
 		try {
 			resume_2.cancel(cancelParams, null);
 		}
 		catch (InvalidRequestException e) {
 			assertEquals("Parameters are not allowed: /v1/subscriptions/"+sub.getId()+"/cancel", e.getMessage());
+			assertEquals("test_type", e.getType());
+			assertEquals("test_code", e.getCode());
 		}
 
 		stubNetwork(Subscription.class, "{\"status\":\"canceled\"}");
