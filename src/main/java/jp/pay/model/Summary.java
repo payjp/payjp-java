@@ -30,6 +30,8 @@ public class Summary extends PayjpObject {
 	Integer net;
 	Integer refundAmount;
 	Integer refundCount;
+	Integer disputeAmount;
+	Integer disputeCount;
 
 	public Integer getChargeFees() {
 		return chargeFees;
@@ -43,6 +45,10 @@ public class Summary extends PayjpObject {
 		return refundCount;
 	}
 
+	public Integer getDisputeCount() {
+		return disputeCount;
+	}
+
 	public Integer getChargeCount() {
 		return chargeCount;
 	}
@@ -53,5 +59,9 @@ public class Summary extends PayjpObject {
 
 	public Integer getRefundAmount() {
 		return refundAmount;
+	}
+
+	public Integer getDisputeAmount() {
+		return disputeAmount;
 	}
 }
