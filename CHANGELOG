@@ -1,3 +1,11 @@
+=== 0.4.3 2020-12-17
+
+* add transfer.summary.dispute_xxx properties #26
+
+=== 0.4.2 2020-06-29
+
+* Fix error.code from InvalidRequestException in 404
+
 === 0.4.1 2019-07-22
 
 * Update [status page URL](https://status.pay.jp)

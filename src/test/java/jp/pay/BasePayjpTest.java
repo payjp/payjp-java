@@ -32,6 +32,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 import jp.pay.Payjp;
 import jp.pay.exception.APIException;
@@ -42,6 +44,7 @@ import jp.pay.exception.PayjpException;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 import jp.pay.net.PayjpResponseGetter;
+import jp.pay.net.LivePayjpResponseGetter;
 import static org.mockito.Mockito.*;
 
 public class BasePayjpTest {
@@ -138,35 +141,29 @@ public class BasePayjpTest {
 					Mockito.any(RequestOptions.class))).thenReturn(APIResource.GSON.fromJson(response, clazz));
 	}
 
-	public static <T> void stubNetwork(Class<T> clazz, int status, String response) throws PayjpException {
-		PayjpResponseGetter.Error error = APIResource.GSON.fromJson(response, PayjpResponseGetter.ErrorContainer.class).error;
-		Throwable exc;
-		switch (status) {
-		case 400:
-			exc = new InvalidRequestException(error.message, error.param, error.type, error.code);
-			break;
-		case 404:
-			exc = new InvalidRequestException(error.message, error.param);
-			break;
-		case 401:
-			exc = new AuthenticationException(error.message);
-			break;
-		case 402:
-			exc = new CardException(error.message, error.param, error.code);
-			break;
-		default:
-			exc = new APIException(error.message, null);
-			break;
-		}
-		Mockito.reset(networkMock);
-		when(networkMock.request(
-					Mockito.any(APIResource.RequestMethod.class),
-					Mockito.anyString(),
-					Mockito.<Map<String, Object>>any(),
-					Mockito.<Class<T>>any(),
-					Mockito.any(APIResource.RequestType.class),
-					Mockito.any(RequestOptions.class))).thenThrow(exc);
-	}
+    public static <T> void stubNetwork(Class<T> clazz, int status, String response) throws PayjpException {
+        try {
+            Method handleAPIError = LivePayjpResponseGetter.class.getDeclaredMethod("handleAPIError", String.class, int.class);
+            handleAPIError.setAccessible(true);
+            handleAPIError.invoke(null, response, status);
+        } catch (InvocationTargetException e) {
+            Throwable exc = e.getCause();
+            // included in java.lang.NoSuchMethodException
+            Mockito.reset(networkMock);
+            when(networkMock.request(
+                Mockito.any(APIResource.RequestMethod.class),
+                Mockito.anyString(),
+                Mockito.<Map<String, Object>>any(),
+                Mockito.<Class<T>>any(),
+                Mockito.any(APIResource.RequestType.class),
+                Mockito.any(RequestOptions.class))
+            ).thenThrow(exc);
+            return;
+        } catch (Exception e) {
+        }
+        stubNetwork(clazz, response);
+        return;
+    }
 
 	public static class ParamMapMatcher extends ArgumentMatcher<Map<String, Object>> {
 		private Map<String, Object> other;
