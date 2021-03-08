@@ -53,6 +53,7 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 	Boolean refunded;
 	String subscription;
 	Map<String, String> metadata = new HashMap<String, String>();
+	String feeRate;
 
 	public String getId() {
 		return id;
@@ -201,6 +202,14 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 	@Deprecated
 	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
+	}
+
+	public String getFeeRate() {
+		return feeRate;
+	}
+
+	public void setFeeRate(String feeRate) {
+		this.feeRate = feeRate;
 	}
 
 	public static Charge create(Map<String, Object> params)
