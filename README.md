@@ -1,6 +1,6 @@
 # PAY.JP for Java
 
-![Build Status](https://github.com/payjp/payjp-java/actions/workflows/main.yml/badge.svg)
+[![Build Status](https://github.com/payjp/payjp-java/actions/workflows/main.yml/badge.svg)](https://github.com/payjp/payjp-java/actions)
 
 Requirements
 ============
