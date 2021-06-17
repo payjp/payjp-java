@@ -1,6 +1,6 @@
 # PAY.JP for Java
 
-[![Build Status](https://travis-ci.org/payjp/payjp-java.svg?branch=master)](https://travis-ci.org/payjp/payjp-java)
+[![Build Status](https://github.com/payjp/payjp-java/actions/workflows/main.yml/badge.svg)](https://github.com/payjp/payjp-java/actions)
 
 Requirements
 ============
