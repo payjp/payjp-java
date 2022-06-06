@@ -180,6 +180,12 @@ public class PayjpTest extends BasePayjpTest {
 		Charge.create(defaultChargeParams);
 	}
 
+	@Test(expected=APIException.class)
+	public void testAPIExceptionWithHtmlResponse() throws PayjpException {
+		stubNetwork(Customer.class, 500, "<html>504 Gateway Time-out</html>");
+		Charge.create(defaultChargeParams);
+	}
+
 	@Test
 	public void testChargeCreate() throws PayjpException {
 		stubNetwork(Charge.class, "{\"refunded\":false,\"paid\":true}");

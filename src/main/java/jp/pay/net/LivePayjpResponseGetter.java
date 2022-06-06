@@ -49,6 +49,7 @@ import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.CardException;
 
 import javax.xml.bind.DatatypeConverter;
+import com.google.gson.JsonSyntaxException;
 
 public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	private static final String DNS_CACHE_TTL_PROPERTY_NAME = "networkaddress.cache.ttl";
@@ -507,7 +508,13 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	}
 
 	private static void handleAPIError(String rBody, int rCode) throws InvalidRequestException, AuthenticationException, CardException, APIException {
-		Error error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
+		Error error = null;
+		try {
+			error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
+		} catch (JsonSyntaxException e) {
+			throw new APIException("not json response.", e);
+		}
+
 		switch (rCode) {
 		case 400:
 		case 404:
