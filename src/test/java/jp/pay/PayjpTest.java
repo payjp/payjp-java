@@ -182,7 +182,7 @@ public class PayjpTest extends BasePayjpTest {
 
 	@Test(expected=APIException.class)
 	public void testAPIExceptionWithHtmlResponse() throws PayjpException {
-		stubNetwork(Customer.class, 504, "<html>504 Gateway Time-out</html>");
+		stubNetwork(Charge.class, 504, "<html>504 Gateway Time-out</html>");
 		Charge.create(defaultChargeParams);
 	}
 
