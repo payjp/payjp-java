@@ -26,8 +26,24 @@ package jp.pay.exception;
 public class APIException extends PayjpException {
 
 	private static final long serialVersionUID = 1L;
+	private int httpStatusCode = -1;
+	private String responseBody;
 
 	public APIException(String message, Throwable e) {
 		super(message, e);
+	}
+
+	public APIException(String message, int httpStatusCode, String responseBody, Throwable e) {
+		super(message, e);
+		this.httpStatusCode = httpStatusCode;
+		this.responseBody = responseBody;
+	}
+
+	public int getHttpStatusCode() {
+		return this.httpStatusCode;
+	}
+
+	public String getResponseBody() {
+		return this.responseBody;
 	}
 }

@@ -186,6 +186,12 @@ public class PayjpTest extends BasePayjpTest {
 		Charge.create(defaultChargeParams);
 	}
 
+	@Test(expected=APIException.class)
+	public void testUnknownErrorFormat() throws PayjpException {
+		stubNetwork(Charge.class, 500, "{\"test\":\"\0\"}");
+		Charge.create(defaultChargeParams);
+	}
+
 	@Test
 	public void testChargeCreate() throws PayjpException {
 		stubNetwork(Charge.class, "{\"refunded\":false,\"paid\":true}");
