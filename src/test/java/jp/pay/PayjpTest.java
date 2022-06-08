@@ -181,13 +181,13 @@ public class PayjpTest extends BasePayjpTest {
 	}
 
 	@Test(expected=APIException.class)
-	public void testAPIExceptionWithHtmlResponse() throws APIException {
+	public void testAPIExceptionWithHtmlResponse() throws PayjpException {
 		stubNetwork(Charge.class, 504, "<html>504 Gateway Time-out</html>");
 		Charge.create(defaultChargeParams);
 	}
 
 	@Test(expected=APIException.class)
-	public void testUnknownErrorFormat() throws APIException {
+	public void testUnknownErrorFormat() throws PayjpException {
 		stubNetwork(Charge.class, 500, "{\"test\":\"\0\"}");
 		Charge.create(defaultChargeParams);
 	}
