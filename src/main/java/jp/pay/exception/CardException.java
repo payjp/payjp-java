@@ -23,7 +23,7 @@
  */
 package jp.pay.exception;
 
-public class CardException extends PayjpException {
+public class CardException extends APIBaseException {
 	private static final long serialVersionUID = 1L;
 
 	private String code;
@@ -37,6 +37,11 @@ public class CardException extends PayjpException {
 
 	public CardException(String message, String param, String code) {
 		this(message, param, code, null);
+	}
+
+	public CardException(String message, String param, String code, int status) {
+		this(message, param, code, null);
+		this.status = status;
 	}
 
 	public String getCode() {

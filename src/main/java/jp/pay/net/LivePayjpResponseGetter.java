@@ -520,11 +520,11 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		switch (rCode) {
 		case 400:
 		case 404:
-			throw new InvalidRequestException(error.message, error.param, error.type, error.code);
+			throw new InvalidRequestException(error.message, error.param, error.type, error.code, rCode);
 		case 401:
-			throw new AuthenticationException(error.message);
+			throw new AuthenticationException(error.message, rCode);
 		case 402:
-			throw new CardException(error.message, error.param, error.code);
+			throw new CardException(error.message, error.param, error.code, rCode);
 		default:
 			throw new APIException(error.message, rCode, null);
 		}
