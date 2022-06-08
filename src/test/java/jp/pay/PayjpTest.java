@@ -180,16 +180,28 @@ public class PayjpTest extends BasePayjpTest {
 		Charge.create(defaultChargeParams);
 	}
 
-	@Test(expected=APIException.class)
+	@Test
 	public void testAPIExceptionWithHtmlResponse() throws PayjpException {
-		stubNetwork(Charge.class, 504, "<html>504 Gateway Time-out</html>");
-		Charge.create(defaultChargeParams);
+		String response = "<html>504 Gateway Time-out</html>";
+		int status = 504;
+		stubNetwork(Charge.class, status, response);
+		try {
+			Charge.create(defaultChargeParams);
+		} catch (APIException exc) {
+			assertEquals(exc.getMessage(), "Not json response. status:" + String.valueOf(status) + " body:" + response);
+		}
 	}
 
-	@Test(expected=APIException.class)
-	public void testUnknownErrorFormat() throws PayjpException {
-		stubNetwork(Charge.class, 500, "{\"test\":\"\0\"}");
-		Charge.create(defaultChargeParams);
+	@Test
+	public void testUnknownErrorJsonFormat() throws PayjpException {
+		String response = "{\"test\":\"\0\"}";
+		int status = 500;
+		stubNetwork(Charge.class, status, response);
+		try {
+			Charge.create(defaultChargeParams);
+		} catch (APIException exc) {
+			assertEquals(exc.getMessage(), "An unknown error occurred while parse response body. status:" + String.valueOf(status) + " body:" + response);
+		}
 	}
 
 	@Test

@@ -512,10 +512,10 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		try {
 			error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
 		} catch (JsonSyntaxException e) {
-			throw new APIException("Not json response.", rCode, rBody, e);
+			throw new APIException("Not json response. status:" + String.valueOf(rCode) + " body:" + rBody, rCode, e);
 		}
 		if (error == null) {
-			throw new APIException("An unknown error occurred while parse response body.", rCode, rBody, null);
+			throw new APIException("An unknown error occurred while parse response body. status:" + String.valueOf(rCode) + " body:" + rBody, rCode, null);
 		}
 		switch (rCode) {
 		case 400:
@@ -526,7 +526,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		case 402:
 			throw new CardException(error.message, error.param, error.code);
 		default:
-			throw new APIException(error.message, rCode, rBody, null);
+			throw new APIException(error.message, rCode, null);
 		}
 
 	}
