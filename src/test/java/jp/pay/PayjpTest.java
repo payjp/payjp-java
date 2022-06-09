@@ -261,7 +261,7 @@ public class PayjpTest extends BasePayjpTest {
             assertEquals("client_error", e.getType());
             assertEquals(null, e.getCode());
             assertEquals(null, e.getParam());
-			assertEquals(404, e.getStatus());
+            assertEquals(404, e.getStatus());
         }
     }
 
