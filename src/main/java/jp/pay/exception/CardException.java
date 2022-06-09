@@ -29,16 +29,6 @@ public class CardException extends APIBaseException {
 	private String code;
 	private String param;
 
-	public CardException(String message, String param, String code, Throwable e) {
-		super(message, e);
-		this.param = param;
-		this.code = code;
-	}
-
-	public CardException(String message, String param, String code) {
-		this(message, param, code, null);
-	}
-
 	public CardException(String message, String param, String code, int status) {
 		this(message, param, code, null);
 		this.status = status;

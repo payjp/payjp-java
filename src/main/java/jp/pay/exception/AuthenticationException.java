@@ -25,11 +25,11 @@ package jp.pay.exception;
 
 public class AuthenticationException extends APIBaseException {
 	public AuthenticationException(String message) {
-		super(message, null);
+		super(message);
 	}
 
 	public AuthenticationException(String message, int status) {
-		super(message, null);
+		super(message);
 		this.status = status;
 	}
 
