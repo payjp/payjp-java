@@ -30,7 +30,9 @@ public class CardException extends APIBaseException {
 	private String param;
 
 	public CardException(String message, String param, String code, int status) {
-		this(message, param, code, null);
+		super(message);
+		this.param = param;
+		this.code = code;
 		this.status = status;
 	}
 
