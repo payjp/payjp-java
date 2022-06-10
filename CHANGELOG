@@ -1,3 +1,11 @@
+
+=== 0.5.0 2022-06-13
+
+This version include breaking changes.
+
+* [breaking change] When API returned not json response, it will throw APIException instead of JsonSyntaxException. #32
+* add getStatus method to each Exception. #32
+
 === 0.4.4 2021-03-08
 
 * add charge.fee_rate properties #28
