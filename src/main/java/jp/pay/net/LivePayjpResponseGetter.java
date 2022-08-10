@@ -49,6 +49,7 @@ import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.CardException;
 
 import javax.xml.bind.DatatypeConverter;
+import com.google.gson.JsonSyntaxException;
 
 public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	private static final String DNS_CACHE_TTL_PROPERTY_NAME = "networkaddress.cache.ttl";
@@ -507,18 +508,27 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	}
 
 	private static void handleAPIError(String rBody, int rCode) throws InvalidRequestException, AuthenticationException, CardException, APIException {
-		Error error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
+		Error error = null;
+		try {
+			error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
+		} catch (JsonSyntaxException e) {
+			throw new APIException("Not json response. status:" + String.valueOf(rCode) + " body:" + rBody, rCode, e);
+		}
+		if (error == null) {
+			throw new APIException("An unknown error occurred while parse response body. status:" + String.valueOf(rCode) + " body:" + rBody, rCode, null);
+		}
 		switch (rCode) {
 		case 400:
 		case 404:
-			throw new InvalidRequestException(error.message, error.param, error.type, error.code);
+			throw new InvalidRequestException(error.message, error.param, error.type, error.code, rCode);
 		case 401:
-			throw new AuthenticationException(error.message);
+			throw new AuthenticationException(error.message, rCode);
 		case 402:
-			throw new CardException(error.message, error.param, error.code);
+			throw new CardException(error.message, error.param, error.code, rCode);
 		default:
-			throw new APIException(error.message, null);
+			throw new APIException(error.message, rCode, null);
 		}
+
 	}
 
 	/*

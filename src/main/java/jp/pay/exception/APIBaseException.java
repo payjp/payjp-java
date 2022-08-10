@@ -23,16 +23,19 @@
  */
 package jp.pay.exception;
 
-public class APIException extends APIBaseException {
+public abstract class APIBaseException extends PayjpException {
 
-	private static final long serialVersionUID = 1L;
+	protected int status = -1;
 
-	public APIException(String message, Throwable e) {
+	public APIBaseException(String message) {
+		super(message);
+	}
+
+	public APIBaseException(String message, Throwable e) {
 		super(message, e);
 	}
 
-	public APIException(String message, int status, Throwable e) {
-		super(message, e);
-		this.status = status;
+	public int getStatus() {
+		return this.status;
 	}
 }

@@ -168,16 +168,52 @@ public class PayjpTest extends BasePayjpTest {
 		defaultPlanParams.put("name", "J Bindings Plan");
 	}
 
-	@Test(expected=AuthenticationException.class)
+	@Test
 	public void testAuthenticationException() throws PayjpException {
 		stubNetwork(Customer.class, 401, "{\"error\":{\"type\":\"auth_error\",\"message\":\"Invalid API Key: sk_test_***\",\"status\":401}}");
-		Charge.create(defaultChargeParams);
+		try {
+			Charge.create(defaultChargeParams);
+		} catch (AuthenticationException exc) {
+			assertEquals(exc.getMessage(), "Invalid API Key: sk_test_***");
+			assertEquals(exc.getStatus(), 401);
+		}
 	}
 
-	@Test(expected=APIException.class)
+	@Test
 	public void testAPIException() throws PayjpException {
 		stubNetwork(Customer.class, 500, "{\"error\":{\"type\":\"server_error\",\"message\":\"xxx\",\"status\":500}}");
-		Charge.create(defaultChargeParams);
+		try {
+			Charge.create(defaultChargeParams);
+		} catch (APIException exc) {
+			assertEquals(exc.getMessage(), "xxx");
+			assertEquals(exc.getStatus(), 500);
+		}
+	}
+
+	@Test
+	public void testAPIExceptionWithHtmlResponse() throws PayjpException {
+		String response = "<html>504 Gateway Time-out</html>";
+		int status = 504;
+		stubNetwork(Charge.class, status, response);
+		try {
+			Charge.create(defaultChargeParams);
+		} catch (APIException exc) {
+			assertEquals(exc.getMessage(), "Not json response. status:" + String.valueOf(status) + " body:" + response);
+			assertEquals(exc.getStatus(), status);
+		}
+	}
+
+	@Test
+	public void testUnknownErrorJsonFormat() throws PayjpException {
+		String response = "{\"test\":\"\0\"}";
+		int status = 500;
+		stubNetwork(Charge.class, status, response);
+		try {
+			Charge.create(defaultChargeParams);
+		} catch (APIException exc) {
+			assertEquals(exc.getMessage(), "An unknown error occurred while parse response body. status:" + String.valueOf(status) + " body:" + response);
+			assertEquals(exc.getStatus(), status);
+		}
 	}
 
 	@Test
@@ -225,6 +261,7 @@ public class PayjpTest extends BasePayjpTest {
             assertEquals("client_error", e.getType());
             assertEquals(null, e.getCode());
             assertEquals(null, e.getParam());
+            assertEquals(404, e.getStatus());
         }
     }
 
@@ -329,7 +366,7 @@ public class PayjpTest extends BasePayjpTest {
 		assertEquals(charges.size(), 1);
 	}
 
-	@Test(expected = CardException.class)
+	@Test
 	public void testInvalidCard() throws PayjpException {
 		Map<String, Object> invalidChargeParams = new HashMap<String, Object>();
 		invalidChargeParams.putAll(defaultChargeParams);
@@ -338,8 +375,13 @@ public class PayjpTest extends BasePayjpTest {
 		invalidCardParams.put("exp_month", 12);
 		invalidCardParams.put("exp_year", 2015);
 		invalidChargeParams.put("card", invalidCardParams);
-		stubNetwork(Charge.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"\",\"param\":\"\"}}");
-		Charge.create(invalidChargeParams);
+		stubNetwork(Charge.class, 402, "{\"error\":{\"type\":\"\",\"code\":\"\",\"message\":\"Invalid card number\",\"param\":\"\"}}");
+		try {
+			Charge.create(invalidChargeParams);
+		} catch (CardException exc) {
+			assertEquals(exc.getMessage(), "Invalid card number");
+			assertEquals(exc.getStatus(), 402);
+		}
 	}
 
 	@Test

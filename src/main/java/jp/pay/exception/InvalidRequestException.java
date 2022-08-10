@@ -23,7 +23,7 @@
  */
 package jp.pay.exception;
 
-public class InvalidRequestException extends PayjpException {
+public class InvalidRequestException extends APIBaseException {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,7 +48,12 @@ public class InvalidRequestException extends PayjpException {
 	}
 
 	public InvalidRequestException(String message, String param, String type, String code) {
-        this(message, param, type, code, null);
+		this(message, param, type, code, null);
+	}
+
+	public InvalidRequestException(String message, String param, String type, String code, int status) {
+		this(message, param, type, code, null);
+		this.status = status;
 	}
 
 	public String getParam() {
