@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import jp.pay.Payjp;
 import jp.pay.exception.APIConnectionException;
@@ -321,6 +322,24 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		}
 	}
 
+	/**
+	 * Get retry delay seconds.
+	 * 
+	 * Based on "Exponential backoff with equal jitter" algorithm.
+	 * https://aws.amazon.com/jp/blogs/architecture/exponential-backoff-and-jitter/
+	 * @param i
+	 * @return
+	 */
+	private static double _getRetryDelay(int i) {
+		double waitTimeHalf = Math.min(Payjp.retryMaxDelay, Payjp.retryInitialDelay * Math.pow(2, i)) / 2;
+		double randomJitter = Math.random() * waitTimeHalf;
+		return waitTimeHalf + randomJitter;
+	}
+
+	private static long _getRetryDelayMilliseconds(int i) {
+		return (long)(_getRetryDelay(i) * 1000);
+	}
+
 	private static <T> T _request(APIResource.RequestMethod method,
 			String url, Map<String, Object> params, Class<T> clazz,
 			APIResource.RequestType type, RequestOptions options)
@@ -351,7 +370,43 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 		}
 
 		try {
-			PayjpResponse response;
+			PayjpResponse response = null;
+			for (int i = 0; i <= Payjp.maxRetry; i++) {
+				response = _getResponse(method, url, params, type, options);
+				if (response.responseCode != 429 || i == Payjp.maxRetry) {
+					break;
+				}
+				TimeUnit.MILLISECONDS.sleep(_getRetryDelayMilliseconds(i));
+			}
+			if (response == null) throw new APIException("Cannot recieve response.", -1, null);
+			if (response.responseCode < 200 || response.responseCode >= 300) {
+				handleAPIError(response.responseBody, response.responseCode);
+			}
+			return APIResource.GSON.fromJson(response.responseBody, clazz);
+		} catch (InterruptedException e) {
+			throw new APIException("Cannot recieve response.", -1, e);
+		} finally {
+			if (allowedToSetTTL) {
+				if (originalDNSCacheTTL == null) {
+					// value unspecified by implementation
+					// DNS_CACHE_TTL_PROPERTY_NAME of -1 = cache forever
+					java.security.Security.setProperty(
+							DNS_CACHE_TTL_PROPERTY_NAME, "-1");
+				} else {
+					java.security.Security.setProperty(
+							DNS_CACHE_TTL_PROPERTY_NAME, originalDNSCacheTTL);
+				}
+			}
+		}
+	}
+
+	private static PayjpResponse _getResponse(APIResource.RequestMethod method,
+			String url, Map<String, Object> params,
+			APIResource.RequestType type, RequestOptions options)
+			throws AuthenticationException, InvalidRequestException,
+			CardException, APIConnectionException, APIException {
+			
+			PayjpResponse response = null;
 			switch (type) {
 			case NORMAL:
 				response = getPayjpResponse(method, url, params, options);
@@ -366,25 +421,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 								+ "This indicates a bug in the Payjp bindings. Please contact "
 								+ "support@pay.jp for assistance.");
 			}
-			int rCode = response.responseCode;
-			String rBody = response.responseBody;
-			if (rCode < 200 || rCode >= 300) {
-				handleAPIError(rBody, rCode);
-			}
-			return APIResource.GSON.fromJson(rBody, clazz);
-		} finally {
-			if (allowedToSetTTL) {
-				if (originalDNSCacheTTL == null) {
-					// value unspecified by implementation
-					// DNS_CACHE_TTL_PROPERTY_NAME of -1 = cache forever
-					java.security.Security.setProperty(
-							DNS_CACHE_TTL_PROPERTY_NAME, "-1");
-				} else {
-					java.security.Security.setProperty(
-							DNS_CACHE_TTL_PROPERTY_NAME, originalDNSCacheTTL);
-				}
-			}
-		}
+			return response;
 	}
 
 	private static PayjpResponse getPayjpResponse(
@@ -508,6 +545,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	}
 
 	private static void handleAPIError(String rBody, int rCode) throws InvalidRequestException, AuthenticationException, CardException, APIException {
+		System.out.println("handleAPIError rBody:"+rBody);
 		Error error = null;
 		try {
 			error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
