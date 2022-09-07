@@ -545,7 +545,6 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	}
 
 	private static void handleAPIError(String rBody, int rCode) throws InvalidRequestException, AuthenticationException, CardException, APIException {
-		System.out.println("handleAPIError rBody:"+rBody);
 		Error error = null;
 		try {
 			error = APIResource.GSON.fromJson(rBody, ErrorContainer.class).error;
