@@ -1,9 +1,9 @@
 name: build
 
 on:
-  release:
-    types: ['published']
-
+  push:
+    branches:    
+      - nyamanaka/release_by_ci_test
 jobs:
   deploy:
     runs-on: ubuntu-latest
