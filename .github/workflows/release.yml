@@ -20,10 +20,10 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
           server-id: maven
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-private-key: MAVEN_GPG_PRIVATE_KEY
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          server-username: ${MAVEN_USERNAME}
+          server-password: ${MAVEN_CENTRAL_TOKEN}
+          gpg-private-key: ${MAVEN_GPG_PRIVATE_KEY}
+          gpg-passphrase: ${MAVEN_GPG_PASSPHRASE}
 
       - name: Publish to Apache Maven Central
         run: mvn clean deploy -DperformRelease=true
