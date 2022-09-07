@@ -77,6 +77,17 @@ public class PayjpExample {
 }
 ```
 
+### Retry on HTTP Status Code 429
+
+- See [Rate Limit Guideline](https://pay.jp/docs/guideline-rate-limit#2-%E3%83%AA%E3%83%88%E3%83%A9%E3%82%A4)
+- When you exceeded rate-limit, you can retry request by setting `Payjp.maxRetry`
+  like `Payjp.maxRetry = 3;` .
+- The retry interval base value is `Payjp.retryInitialDelay`  
+  Adjust the value like `Payjp.retryInitialDelay = 4;`  
+  The smaller is shorter.
+- The retry interval calcurating is based on "Exponential backoff with equal jitter" algorithm.  
+  See https://aws.amazon.com/jp/blogs/architecture/exponential-backoff-and-jitter/
+
 Testing
 =======
 
