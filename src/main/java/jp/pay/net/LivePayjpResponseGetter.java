@@ -384,7 +384,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 			}
 			return APIResource.GSON.fromJson(response.responseBody, clazz);
 		} catch (InterruptedException e) {
-			throw new APIException("Cannot recieve response.", -1, e);
+			throw new APIException("Current thread interrupt.", -1, e);
 		} finally {
 			if (allowedToSetTTL) {
 				if (originalDNSCacheTTL == null) {
