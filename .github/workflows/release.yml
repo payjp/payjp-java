@@ -23,7 +23,7 @@ jobs:
           server-password: MAVEN_CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
-      - name: check existing
-        run: cat $HOME/.m2/settings.xml|grep gpg|wc -l
+      - name: list keys
+        run: gpg --list-keys
       - name: Publish to Apache Maven Central
-        run: mvn clean deploy -DperformRelease=true
+        run: mvn deploy -DperformRelease=true
