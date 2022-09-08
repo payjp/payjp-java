@@ -11,7 +11,6 @@ jobs:
       checks: write
       contents: write
       deployments: read 
-      id-token: read
     environment: Maven
     runs-on: ubuntu-latest
     steps:
@@ -32,9 +31,9 @@ jobs:
         run: |
           gpg --version
           java -version
-      - name: check tty
-        run: |
-          tty
-          export GPG_TTY=$(tty)
+      # - name: check tty
+      #   run: |
+      #     tty
+      #     export GPG_TTY=$(tty)
       - name: gpg test
         run: mvn clean install
