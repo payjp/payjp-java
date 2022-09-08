@@ -38,5 +38,5 @@ jobs:
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       - name: list keys
         run: gpg --list-keys
-      # - name: Publish to Apache Maven Central
-      #   run: mvn deploy -DperformRelease=true
+      - name: gpg test
+        run: mvn install
