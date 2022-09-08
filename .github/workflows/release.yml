@@ -1,11 +1,11 @@
-name: deploy
+name: build-and-deploy
 
 on:
   push:
     branches:    
       - nyamanaka/release_by_ci_test
 jobs:
-  deploy:
+  build-and-deploy:
     environment: Maven
     runs-on: ubuntu-latest
     steps:
