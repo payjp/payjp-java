@@ -6,6 +6,12 @@ on:
       - nyamanaka/release_by_ci_test
 jobs:
   build-and-deploy:
+    permissions:
+      actions: write
+      checks: write
+      contents: write
+      deployments: read 
+      id-token: read
     environment: Maven
     runs-on: ubuntu-latest
     steps:
