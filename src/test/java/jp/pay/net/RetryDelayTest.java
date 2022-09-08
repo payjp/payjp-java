@@ -1,17 +1,16 @@
 /*
- * Copyright (c) 2010-2011 Stripe (http://stripe.com)
- * Copyright (c) 2015 Base, Inc. (http://binc.jp/)
- *
+ * Copyright (c) 2022 Pay, Inc. (https://pay.co.jp/)
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,34 +20,29 @@
  * THE SOFTWARE.
  *
  */
-package jp.pay;
 
-public abstract class Payjp {
-	public static final String LIVE_API_BASE = "https://api.pay.jp";
-	public static final String VERSION = "0.6.0";
-	public static volatile String apiKey;
-	public static volatile String apiVersion;
-	public static volatile Integer maxRetry = 0;
-	public static volatile Integer retryInitialDelay = 2;
-	public static volatile Integer retryMaxDelay = 32;
+package jp.pay.net;
 
-	private static volatile String apiBase = LIVE_API_BASE;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import org.junit.Test;
 
-	static {
-		final String _apiBase = System.getProperty("jp.pay.api.baseUrl");
-		if (_apiBase != null)
-			apiBase = _apiBase;
+import static org.junit.Assert.assertTrue;
+
+public class RetryDelayTest {
+
+	@Test
+	public void testRetryDelay() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		Method getRetryDelay = LivePayjpResponseGetter.class.getDeclaredMethod("getRetryDelay", int.class);
+		getRetryDelay.setAccessible(true);
+		assertBetween((Long) getRetryDelay.invoke(null, 0), 1, 2);
+		assertBetween((Long) getRetryDelay.invoke(null, 1), 2, 4);
+		assertBetween((Long) getRetryDelay.invoke(null, 2), 3, 9);
+		assertBetween((Long) getRetryDelay.invoke(null, 3), 4, 16);
 	}
 
-	/**
-	 * (FOR TESTING ONLY) If you'd like your API requests to hit your own
-	 * (mocked) server, you can set this up here by overriding the base api URL.
-	 */
-	public static void overrideApiBase(final String overriddenApiBase) {
-		apiBase = overriddenApiBase;
-	}
-
-	public static String getApiBase() {
-		return apiBase;
+	private void assertBetween(Long value, int start, int end) {
+		assertTrue(value.compareTo((long) (start * 1000)) >= 0);
+		assertTrue(value.compareTo((long) (end * 1000)) <= 0);
 	}
 }
