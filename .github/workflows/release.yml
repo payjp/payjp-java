@@ -7,25 +7,9 @@ on:
 jobs:
   deploy:
     environment: Maven
-    env:
-      # MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
-      # MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
-      # MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-      # MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-      TEST_VALUE: ${{ secrets.TEST_VALUE }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: test write
-        run: |
-          echo "${TEST_VALUE}" > test.txt
-          echo "${{ secrets.TEST_VALUE }}" > test2.txt
-          echo "${{ env.TEST_VALUE }}" > test3.txt
-      - name: test read
-        run: |
-          cat test.txt|wc -l
-          cat test2.txt|wc -l
-          cat test3.txt|wc -l
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v3
         with:
@@ -38,5 +22,9 @@ jobs:
           gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
       - name: list keys
         run: gpg --list-keys
+      - name: version
+        run: |
+        gpg --version
+        java -version
       - name: gpg test
         run: mvn clean install
