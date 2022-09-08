@@ -6,6 +6,7 @@ on:
       - nyamanaka/release_by_ci_test
 jobs:
   deploy:
+    environment: Maven
     env:
       # MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
       # MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
