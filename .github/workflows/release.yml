@@ -21,8 +21,8 @@ jobs:
           echo ${{ secrets.TEST_VALUE }} > test2.txt
       - name: test read
         run: |
-          cat test.txt 
-          cat test2.txt 
+          cat test.txt|wc -l
+          cat test2.txt|wc -l
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v3
         with:
