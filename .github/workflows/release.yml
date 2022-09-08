@@ -20,8 +20,6 @@ jobs:
           echo "${TEST_VALUE}" > test.txt
           echo "${{ secrets.TEST_VALUE }}" > test2.txt
           echo "${{ env.TEST_VALUE }}" > test3.txt
-        env:
-          TEST_VALUE: ${{ secrets.TEST_VALUE }}
       - name: test read
         run: |
           cat test.txt|wc -l
