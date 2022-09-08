@@ -19,20 +19,22 @@ jobs:
         run: |
           echo $TEST_VALUE > test.txt
           echo ${{ secrets.TEST_VALUE }} > test2.txt
+          echo ${{ env.TEST_VALUE }} > test3.txt
       - name: test read
         run: |
           cat test.txt|wc -l
           cat test2.txt|wc -l
+          cat test3.txt|wc -l
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
           server-id: sonatype-nexus-staging
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_CENTRAL_TOKEN
-          gpg-private-key: MAVEN_GPG_PRIVATE_KEY
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          server-username: ${{ env.MAVEN_USERNAME }}
+          server-password: ${{ env.MAVEN_CENTRAL_TOKEN }}
+          gpg-private-key: ${{ env.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ env.MAVEN_GPG_PASSPHRASE }}
       - name: list keys
         run: gpg --list-keys
       # - name: Publish to Apache Maven Central
