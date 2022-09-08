@@ -46,6 +46,12 @@
         <artifactId>oss-parent</artifactId>
         <version>7</version>
     </parent>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
     <scm>
         <connection>scm:git:git@github.com:payjp/payjp-java.git</connection>
         <developerConnection>scm:git:git@github.com:payjp/payjp-java.git</developerConnection>
