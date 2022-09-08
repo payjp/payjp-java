@@ -26,5 +26,9 @@ jobs:
         run: |
           gpg --version
           java -version
+      - name: check tty
+        run: |
+          tty
+          export GPG_TTY=$(tty)
       - name: gpg test
         run: mvn clean install
