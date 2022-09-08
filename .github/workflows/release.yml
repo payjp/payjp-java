@@ -11,6 +11,8 @@ jobs:
       checks: write
       contents: write
       deployments: read 
+      statuses: read
+      security-events: read
     environment: Maven
     runs-on: ubuntu-latest
     steps:
