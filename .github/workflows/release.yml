@@ -39,4 +39,4 @@ jobs:
       - name: list keys
         run: gpg --list-keys
       - name: gpg test
-        run: mvn install
+        run: mvn clean install
