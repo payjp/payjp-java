@@ -7,18 +7,25 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: Maven
     steps:
       - uses: actions/checkout@v3
+      - name: set fake tty  # https://github.com/actions/runner/issues/241
+        shell: 'script -q -e -c "bash {0}"'
+        run: |
+          export GPG_TTY=$(tty)
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: '11'
           server-id: maven
-          server-username: ${{ secrets.MAVEN_USERNAME }}
-          server-password: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_CENTRAL_TOKEN
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
       - name: Publish to Apache Maven Central
         run: mvn clean deploy -DperformRelease=true
+        env:
+          MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
+          MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
