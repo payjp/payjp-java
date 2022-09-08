@@ -44,4 +44,4 @@ jobs:
       #     export GPG_TTY=$(tty)
       - name: gpg test
         shell: 'script -q -e -c "bash {0}"'
-        run: mvn -s $HOME/.m2/settings.xml clean install
+        run: mvn clean install
