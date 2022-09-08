@@ -31,18 +31,18 @@ import static org.junit.Assert.assertTrue;
 
 public class RetryDelayTest {
 
-    @Test
-    public void testRetryDelay() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		Method _getRetryDelay = LivePayjpResponseGetter.class.getDeclaredMethod("_getRetryDelay", int.class);
-		_getRetryDelay.setAccessible(true);
-		assertBetween((Double)_getRetryDelay.invoke(null, 0), 1, 2);
-		assertBetween((Double)_getRetryDelay.invoke(null, 1), 2, 4);
-		assertBetween((Double)_getRetryDelay.invoke(null, 2), 3, 9);
-		assertBetween((Double)_getRetryDelay.invoke(null, 3), 4, 16);
-    }
+	@Test
+	public void testRetryDelay() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+		Method getRetryDelay = LivePayjpResponseGetter.class.getDeclaredMethod("getRetryDelay", int.class);
+		getRetryDelay.setAccessible(true);
+		assertBetween((Long) getRetryDelay.invoke(null, 0), 1, 2);
+		assertBetween((Long) getRetryDelay.invoke(null, 1), 2, 4);
+		assertBetween((Long) getRetryDelay.invoke(null, 2), 3, 9);
+		assertBetween((Long) getRetryDelay.invoke(null, 3), 4, 16);
+	}
 
-	private void assertBetween(Double value, int start, int end) {
-		assertTrue(value.compareTo((double)start) >= 0);
-		assertTrue(value.compareTo((double)end) <= 0);
+	private void assertBetween(Long value, int start, int end) {
+		assertTrue(value.compareTo((long) (start * 1000)) >= 0);
+		assertTrue(value.compareTo((long) (end * 1000)) <= 0);
 	}
 }

@@ -323,21 +323,18 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 	}
 
 	/**
-	 * Get retry delay seconds.
+	 * Get retry delay milliseconds.
 	 * 
 	 * Based on "Exponential backoff with equal jitter" algorithm.
 	 * https://aws.amazon.com/jp/blogs/architecture/exponential-backoff-and-jitter/
+	 * 
 	 * @param i
 	 * @return
 	 */
-	private static double _getRetryDelay(int i) {
+	private static long getRetryDelay(int i) {
 		double waitTimeHalf = Math.min(Payjp.retryMaxDelay, Payjp.retryInitialDelay * Math.pow(2, i)) / 2;
 		double randomJitter = Math.random() * waitTimeHalf;
-		return waitTimeHalf + randomJitter;
-	}
-
-	private static long _getRetryDelayMilliseconds(int i) {
-		return (long)(_getRetryDelay(i) * 1000);
+		return (long) ((waitTimeHalf + randomJitter) * 1000);
 	}
 
 	private static <T> T _request(APIResource.RequestMethod method,
@@ -376,7 +373,7 @@ public class LivePayjpResponseGetter implements PayjpResponseGetter {
 				if (response.responseCode != 429 || i == Payjp.maxRetry) {
 					break;
 				}
-				TimeUnit.MILLISECONDS.sleep(_getRetryDelayMilliseconds(i));
+				TimeUnit.MILLISECONDS.sleep(getRetryDelay(i));
 			}
 			if (response == null) throw new APIException("Cannot recieve response.", -1, null);
 			if (response.responseCode < 200 || response.responseCode >= 300) {
