@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: set fake tty
+        shell: 'script -q -e -c "bash {0}"'
+        run: tty
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v3
         with:
@@ -36,4 +39,4 @@ jobs:
       #     tty
       #     export GPG_TTY=$(tty)
       - name: gpg test
-        run: mvn clean install
+        run: mvn -s $HOME/.m2/settings.xml clean install
