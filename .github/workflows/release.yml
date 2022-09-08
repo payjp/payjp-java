@@ -11,9 +11,18 @@ jobs:
       MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
       MAVEN_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
       MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+      TEST_VALUE: ${{ secrets.TEST_VALUE }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: test write
+        run: |
+          echo $TEST_VALUE > test.txt
+          echo ${{ secrets.TEST_VALUE }} > test2.txt
+      - name: test read
+        run: |
+          cat test.txt 
+          cat test2.txt 
       - name: Set up Apache Maven Central
         uses: actions/setup-java@v3
         with:
