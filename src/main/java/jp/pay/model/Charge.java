@@ -54,6 +54,7 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 	String subscription;
 	Map<String, String> metadata = new HashMap<String, String>();
 	String feeRate;
+	String threeDSecureStatus;
 
 	public String getId() {
 		return id;
@@ -211,6 +212,15 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 	public void setFeeRate(String feeRate) {
 		this.feeRate = feeRate;
 	}
+
+	public String getThreeDSecureStatus() {
+		return threeDSecureStatus;
+	}
+
+	public void setThreeDSecureStatus(String threeDSecureStatus) {
+		this.threeDSecureStatus = threeDSecureStatus;
+	}
+
 
 	public static Charge create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
