@@ -42,5 +42,6 @@
   "refunded": false,
   "subscription": null,
   "tenant": "ten_121673955bd7aa144de5a8f6c262",
-  "total_platform_fee": 350
+  "total_platform_fee": 350,
+  "three_d_secure_status": "attempt"
 }

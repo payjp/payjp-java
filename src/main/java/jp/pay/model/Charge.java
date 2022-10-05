@@ -54,6 +54,7 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 	String subscription;
 	Map<String, String> metadata = new HashMap<String, String>();
 	String feeRate;
+	String threeDSecureStatus;
 
 	public String getId() {
 		return id;
@@ -212,6 +213,15 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 		this.feeRate = feeRate;
 	}
 
+	public String getThreeDSecureStatus() {
+		return threeDSecureStatus;
+	}
+
+	public void setThreeDSecureStatus(String threeDSecureStatus) {
+		this.threeDSecureStatus = threeDSecureStatus;
+	}
+
+
 	public static Charge create(Map<String, Object> params)
 			throws AuthenticationException, InvalidRequestException,
 			APIConnectionException, CardException, APIException {
@@ -308,5 +318,11 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.POST, String.format("%s/capture",
 						instanceURL(Charge.class, this.getId())), params, Charge.class, options);
+	}
+
+	public static Charge tdsFinish(String id, Map<String, Object> params, RequestOptions options)
+		throws AuthenticationException, InvalidRequestException,
+		APIConnectionException, CardException, APIException {
+		return request(RequestMethod.POST, String.format("%s/tds_finish", instanceURL(Charge.class, id)), params, Charge.class, options);
 	}
 }
