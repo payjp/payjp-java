@@ -1,4 +1,8 @@
 
+=== 0.6.1 2022-10-05
+
+* Add 3D Secure feature. #37
+
 === 0.6.0 2022-09-08
 
 * Add retry feature. #34
