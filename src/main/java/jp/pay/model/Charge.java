@@ -320,16 +320,9 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 						instanceURL(Charge.class, this.getId())), params, Charge.class, options);
 	}
 
-	public Charge tdsFinish(Map<String, Object> params, RequestOptions options)
-			throws AuthenticationException, InvalidRequestException,
-			APIConnectionException, CardException, APIException {
-		return request(RequestMethod.POST, String.format("%s/tds_finish", instanceURL(Charge.class, this.getId())), params, Charge.class, options);
-	}
-
-	public static Charge tdsFinish(String id, RequestOptions options)
+	public static Charge tdsFinish(String id, Map<String, Object> params, RequestOptions options)
 		throws AuthenticationException, InvalidRequestException,
 		APIConnectionException, CardException, APIException {
-		return request(RequestMethod.POST, String.format("%s/tds_finish", instanceURL(Charge.class, id)), null, Charge.class, options);
+		return request(RequestMethod.POST, String.format("%s/tds_finish", instanceURL(Charge.class, id)), params, Charge.class, options);
 	}
-
 }
