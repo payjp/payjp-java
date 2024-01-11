@@ -65,23 +65,6 @@ public class BasePayjpTest {
 				APIResource.RequestType.NORMAL, RequestOptions.getDefault());
 	}
 
-	public static <T> void verifyGet(
-			Class<T> clazz,
-			String url,
-			RequestOptions requestOptions) throws PayjpException {
-		verifyRequest(APIResource.RequestMethod.GET, clazz, url, null,
-				APIResource.RequestType.NORMAL, requestOptions);
-	}
-
-	public static <T> void verifyGet(
-			Class<T> clazz,
-			String url,
-			Map<String, Object> params,
-			RequestOptions requestOptions) throws PayjpException {
-		verifyRequest(APIResource.RequestMethod.GET, clazz, url, params,
-				APIResource.RequestType.NORMAL, requestOptions);
-	}
-
 	public static <T> void verifyPost(
 			Class<T> clazz,
 			String url) throws PayjpException {
@@ -95,23 +78,6 @@ public class BasePayjpTest {
 			Map<String, Object> params) throws PayjpException {
 		verifyRequest(APIResource.RequestMethod.POST, clazz, url, params,
 				APIResource.RequestType.NORMAL, RequestOptions.getDefault());
-	}
-
-	public static <T> void verifyPost(
-			Class<T> clazz,
-			String url,
-			RequestOptions requestOptions) throws PayjpException {
-		verifyRequest(APIResource.RequestMethod.POST, clazz, url, null,
-				APIResource.RequestType.NORMAL, requestOptions);
-	}
-
-	public static <T> void verifyPost(
-			Class<T> clazz,
-			String url,
-			Map<String, Object> params,
-			RequestOptions requestOptions) throws PayjpException {
-		verifyRequest(APIResource.RequestMethod.POST, clazz, url, params,
-				APIResource.RequestType.NORMAL, requestOptions);
 	}
 
 	public static <T> void verifyRequest(

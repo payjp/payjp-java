@@ -17,5 +17,5 @@ jobs:
         with:
           java-version: ${{ matrix.java-version }}
           distribution: 'adopt'
-      - name: Build with Maven
+      - name: Build & Test with Maven
         run: mvn install -Dgpg.skip=true
