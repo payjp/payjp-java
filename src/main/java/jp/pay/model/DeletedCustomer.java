@@ -44,7 +44,4 @@ public class DeletedCustomer extends PayjpObject implements DeletedPayjpObject {
 	public Boolean getLivemode() {
 		return livemode;
 	}
-	public void setLivemode(Boolean livemode) {
-		this.livemode = livemode;
-	}
 }

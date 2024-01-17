@@ -26,6 +26,7 @@ package jp.pay;
 
 import jp.pay.exception.CardException;
 
+import jp.pay.model.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -40,28 +41,6 @@ import jp.pay.exception.InvalidRequestException;
 import jp.pay.exception.PayjpException;
 import jp.pay.exception.AuthenticationException;
 import jp.pay.exception.APIException;
-import jp.pay.model.Account;
-import jp.pay.model.Card;
-import jp.pay.model.Charge;
-import jp.pay.model.ChargeCollection;
-import jp.pay.model.Customer;
-import jp.pay.model.CustomerCardCollection;
-import jp.pay.model.CustomerCollection;
-import jp.pay.model.CustomerSubscriptionCollection;
-import jp.pay.model.DeletedCard;
-import jp.pay.model.DeletedCustomer;
-import jp.pay.model.DeletedPlan;
-import jp.pay.model.DeletedSubscription;
-import jp.pay.model.Event;
-import jp.pay.model.EventCollection;
-import jp.pay.model.Plan;
-import jp.pay.model.PlanCollection;
-import jp.pay.model.Subscription;
-import jp.pay.model.SubscriptionCollection;
-import jp.pay.model.Token;
-import jp.pay.model.Transfer;
-import jp.pay.model.TransferChargeCollection;
-import jp.pay.model.TransferCollection;
 import jp.pay.net.APIResource;
 import jp.pay.net.LivePayjpResponseGetter;
 import jp.pay.net.RequestOptions;
@@ -1035,4 +1014,37 @@ public class PayjpTest extends BasePayjpTest {
 	public void testAccountRetrieve() throws PayjpException {
 		Account.retrieve();
 	}
+
+	@Test
+	public void testStatementList() throws PayjpException {
+		Map<String, Object> listParams = new HashMap<String, Object>();
+		listParams.put("limit", 1);
+		stubNetwork(StatementCollection.class, "{\"count\":1,\"data\":[{}]}");
+		List<Statement> statements = Statement.all(listParams).getData();
+		verifyGet(StatementCollection.class, "https://api.pay.jp/v1/statements", listParams);
+		assertEquals(statements.size(), 1);
+	}
+
+	@Test
+	public void testStatementUrls() throws PayjpException {
+		Map<String, Object> listParams = new HashMap<String, Object>();
+		listParams.put("limit", 1);
+		stubNetwork(StatementCollection.class, "{\"count\":1,\"data\":[{\"id\":\"aa\"}]}");
+		List<Statement> statements = Statement.all(listParams).getData();
+		Statement statement = statements.get(0);
+		String id = statement.getId();
+		assertEquals(id, "aa");
+
+		stubNetwork(Statement.class, "{\"id\":\"aa\",\"items\":[{\"tax_rate\":\"0.10\"}]}");
+		Statement r = Statement.retrieve(id);
+		assertEquals(r.getItems().get(0).getTaxRate(), "0.10");
+
+		stubNetwork(StatementUrl.class, "{\"url\":\"bb\",\"expires\":1,\"object\":\"statement_url\"}");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("platformer", true);
+		StatementUrl url = r.statementUrls(params);
+		verifyPost(StatementUrl.class, "https://api.pay.jp/v1/statements/aa/statement_urls", params);
+		assertEquals(url.getUrl(), "bb");
+	}
+
 }
