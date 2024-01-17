@@ -36,5 +36,6 @@
         "site_published": false,
         "url": "https://pay.jp"
     },
-    "object": "account"
+    "object": "account",
+    "team_id": "example-team-id"
 }
