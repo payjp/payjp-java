@@ -39,6 +39,7 @@ public class Account extends APIResource {
 	Long created;
 	String email;
 	Merchant merchant;
+	String teamId;
 
 	public String getId() {
 		return id;
@@ -54,6 +55,10 @@ public class Account extends APIResource {
 
 	public Merchant getMerchant() {
 		return merchant;
+	}
+
+	public String getTeamId() {
+		return teamId;
 	}
 
 	public static Account retrieve()

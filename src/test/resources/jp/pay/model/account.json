@@ -31,5 +31,6 @@
     "site_published": false,
     "url": null
   },
-  "object": "account"
+  "object": "account",
+  "team_id": "example-team-id"
 }

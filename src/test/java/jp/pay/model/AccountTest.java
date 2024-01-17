@@ -99,6 +99,8 @@ public class AccountTest extends BasePayjpTest {
         assertEquals(null, acc.getMerchant().getProductType());
         assertEquals(false, acc.getMerchant().getSitePublished());
         assertEquals(null, acc.getMerchant().getUrl());
+
+        assertEquals("example-team-id", acc.getTeamId());
     }
 
     @Test
@@ -153,6 +155,8 @@ public class AccountTest extends BasePayjpTest {
 
         assertEquals(false, acc.getMerchant().getSitePublished());
         assertEquals("https://pay.jp", acc.getMerchant().getUrl());
+
+        assertEquals("example-team-id", acc.getTeamId());
     }
 
     @Test
