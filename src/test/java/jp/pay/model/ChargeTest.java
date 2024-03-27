@@ -84,6 +84,7 @@ public class ChargeTest extends BasePayjpTest {
 		assertNull(ch.getMetadata());
 		assertEquals("3.00", ch.getFeeRate());
 		assertEquals("attempt", ch.getThreeDSecureStatus());
+		assertEquals("tm_b92b879e60f62b532d6756ae12cc", ch.getTermId());
 
 		Card ca = ch.getCard();
 		assertEquals("car_d0e44730f83b0a19ba6caee04160", ca.getId());
