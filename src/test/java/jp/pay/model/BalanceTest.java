@@ -21,10 +21,9 @@
  * THE SOFTWARE.
  *
  */
-package jp.pay;
+package jp.pay.model;
 
 
-import jp.pay.model.*;
 import jp.pay.net.APIResource;
 
 import org.junit.Test;
@@ -36,9 +35,10 @@ import java.util.List;
 import java.util.Map;
 
 import jp.pay.exception.PayjpException;
+import jp.pay.BasePayjpTest;
 import static org.junit.Assert.assertEquals;
 
-public class PayjpBalanceTest extends BasePayjpTest {
+public class BalanceTest extends BasePayjpTest {
 	@Test
 	public void testDeserialize() throws PayjpException, IOException {
 		String json = resource("model/balance.json");
