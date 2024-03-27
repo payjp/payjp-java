@@ -44,7 +44,19 @@
     "livemode": true,
     "object": "statement",
     "title": null,
-    "updated": 1695892351
+    "updated": 1695892351,
+    "term": {
+      "created": 1438354812,
+      "id": "tm_b92b879e60f62b532d6756ae12dd",
+      "livemode": false,
+      "object": "term",
+      "charge_count": 987,
+      "refund_count": 57,
+      "dispute_count": 4,
+      "end_at": 1439650800,
+      "start_at": 1438354801
+    },
+    "balance_id": "ba_b92b879e60f62b532d6756ae90af"
   },
   "id": "evnt_2f7436fe0017098bc8d22221d1e",
   "livemode": false,

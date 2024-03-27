@@ -69,6 +69,10 @@ public class DeserializerTest extends BasePayjpTest {
 
 		Statement obj = (Statement)e.getData();
 		assertEquals("st_178fd25dc7ab7b75906f5d4c4b0e6", obj.getId());
+		assertEquals("ba_b92b879e60f62b532d6756ae90af", obj.getBalanceId());
+
+		Term term = obj.getTerm();
+		assertEquals("tm_b92b879e60f62b532d6756ae12dd", term.getId());
 	}
 
 	@Test

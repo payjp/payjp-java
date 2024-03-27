@@ -15,6 +15,8 @@ public class Statement extends APIResource {
 	Boolean livemode;
 	String title;
 	Long updated;
+	Term term;
+	String balanceId;
 
 	public class StatementItem {
 		Integer amount;
@@ -58,6 +60,15 @@ public class Statement extends APIResource {
 	public void setLivemode(Boolean livemode) {
 		this.livemode = livemode;
 	}
+
+	public Term getTerm() {
+		return term;
+	}
+
+	public String getBalanceId() {
+		return balanceId;
+	}
+
 
 
 	public static Statement retrieve(String id) throws AuthenticationException,
