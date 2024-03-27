@@ -48,4 +48,37 @@ public class DeserializerTest extends BasePayjpTest {
 		Subscription sub = (Subscription)e.getData();
 		assertEquals("sub_dca9de79e5240009adb994d52974", sub.getId());
 	}
+
+	@Test
+	public void deserializeTermEvent() throws IOException {
+		String json = resource("term_event.json");
+		Event e = gson.fromJson(json, Event.class);
+
+		assertEquals(Term.class, e.getData().getClass());
+
+		Term term = (Term)e.getData();
+		assertEquals("tm_b92b879e60f62b532d6756ae12bb", term.getId());
+	}
+
+	@Test
+	public void deserializeStatementEvent() throws IOException {
+		String json = resource("statement_event.json");
+		Event e = gson.fromJson(json, Event.class);
+
+		assertEquals(Statement.class, e.getData().getClass());
+
+		Statement obj = (Statement)e.getData();
+		assertEquals("st_178fd25dc7ab7b75906f5d4c4b0e6", obj.getId());
+	}
+
+	@Test
+	public void deserializeBalanceEvent() throws IOException {
+		String json = resource("balance_event.json");
+		Event e = gson.fromJson(json, Event.class);
+
+		assertEquals(Balance.class, e.getData().getClass());
+
+		Balance obj = (Balance)e.getData();
+		assertEquals("ba_b92b879e60f62b532d6756ae78af", obj.getId());
+	}
 }

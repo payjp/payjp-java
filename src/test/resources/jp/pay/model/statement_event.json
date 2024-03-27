@@ -1,0 +1,54 @@
+{
+  "created": 1432973142,
+  "data": {
+    "created": 1695892351,
+    "id": "st_178fd25dc7ab7b75906f5d4c4b0e6",
+    "items": [
+      {
+        "amount": 3125,
+        "name": "売上",
+        "subject": "gross_sales",
+        "tax_rate": "0.00"
+      },
+      {
+        "amount": -75,
+        "name": "決済手数料",
+        "subject": "fee",
+        "tax_rate": "0.00"
+      },
+      {
+        "amount": -1800,
+        "name": "返金",
+        "subject": "gross_refund",
+        "tax_rate": "0.00"
+      },
+      {
+        "amount": 36,
+        "name": "返金による手数料返還",
+        "subject": "refund_fee_offset",
+        "tax_rate": "0.00"
+      },
+      {
+        "amount": -775,
+        "name": "チャージバック",
+        "subject": "chargeback",
+        "tax_rate": "0.00"
+      },
+      {
+        "amount": 25,
+        "name": "チャージバックによる手数料返還",
+        "subject": "chargeback_fee_offset",
+        "tax_rate": "0.00"
+      }
+    ],
+    "livemode": true,
+    "object": "statement",
+    "title": null,
+    "updated": 1695892351
+  },
+  "id": "evnt_2f7436fe0017098bc8d22221d1e",
+  "livemode": false,
+  "object": "event",
+  "pending_webhooks": 0,
+  "type": "statement.resumed"
+}
