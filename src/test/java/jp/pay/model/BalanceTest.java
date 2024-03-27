@@ -41,7 +41,7 @@ import static org.junit.Assert.assertEquals;
 public class BalanceTest extends BasePayjpTest {
 	@Test
 	public void testDeserialize() throws PayjpException, IOException {
-		String json = resource("model/balance.json");
+		String json = resource("balance.json");
 		Balance balance = APIResource.GSON.fromJson(json, Balance.class);
 		assertEquals("ba_b92b879e60f62b532d6756ae56af", balance.getId());
 		assertEquals(Long.valueOf("1438354824"), balance.getCreated());

@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class TermTest extends BasePayjpTest {
 	@Test
 	public void testDeserialize() throws PayjpException, IOException {
-		String json = resource("model/term.json");
+		String json = resource("term.json");
 		Term term = APIResource.GSON.fromJson(json, Term.class);
 		assertEquals("tm_b92b879e60f62b532d6756ae12aa", term.getId());
 		assertEquals(Long.valueOf("1438354812"), term.getCreated());
