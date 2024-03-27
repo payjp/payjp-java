@@ -84,17 +84,6 @@ public class PayjpTest extends BasePayjpTest {
 		return subscriptionParams;
 	}
 
-    @Before
-    public void mockPayjpResponseGetter() {
-        APIResource.setPayjpResponseGetter(networkMock);
-    }
-
-    @After
-    public void unmockPayjpResponseGetter() {
-        /* This needs to be done because tests aren't isolated in Java */
-        APIResource.setPayjpResponseGetter(new LivePayjpResponseGetter());
-    }
-
 	@Before
 	public void before() {
 		Payjp.apiVersion = null;
@@ -102,8 +91,6 @@ public class PayjpTest extends BasePayjpTest {
 
 	@BeforeClass
 	public static void setUp() {
-		Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";	// public api key for test
-
 		cardSupportedRequestOptions = RequestOptions.builder().setPayjpVersion("2015-06-23").build();
 
 		defaultCardParams.put("number", "4242424242424242");
