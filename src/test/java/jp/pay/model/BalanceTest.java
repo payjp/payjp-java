@@ -43,9 +43,23 @@ public class BalanceTest extends BasePayjpTest {
 	public void testDeserialize() throws PayjpException, IOException {
 		String json = resource("balance.json");
 		Balance balance = APIResource.GSON.fromJson(json, Balance.class);
+
 		assertEquals("ba_b92b879e60f62b532d6756ae56af", balance.getId());
 		assertEquals(Long.valueOf("1438354824"), balance.getCreated());
+		assertEquals(Boolean.FALSE, balance.getLivemode());
 		assertEquals(BigInteger.valueOf(Long.valueOf("12300000000")), balance.getNet());
+		assertEquals("collecting", balance.getType());
+		assertEquals(Boolean.FALSE, balance.getClosed());
+		assertEquals(null, balance.getDueDate());
+
+		BankInfo bankInfo = balance.getBankInfo();
+		assertEquals("0000", bankInfo.getBankCode());
+		assertEquals("123", bankInfo.getBankBranchCode());
+		assertEquals("普通", bankInfo.getBankAccountType());
+		assertEquals("1234567", bankInfo.getBankAccountNumber());
+		assertEquals("ペイ　タロウ", bankInfo.getBankAccountHolderName());
+		assertEquals("pending", bankInfo.getBankAccountStatus());
+
 		StatementCollection statements = balance.getStatements();
 		assertEquals("st_178fd25dc7ab7b75906f1c3c4b0e6", statements.getData().get(0).getId());
 		assertEquals("st_b4a569b0122a7d08b358f198cf263", statements.getData().get(1).getId());
@@ -53,24 +67,22 @@ public class BalanceTest extends BasePayjpTest {
 
 	@Test
 	public void testRetrieve() throws PayjpException {
-		Map<String, Object> listParams = new HashMap<String, Object>();
-		listParams.put("limit", 1);
 		stubNetwork(Balance.class, "{\"id\":\"balance1\"}");
 		Balance balance = Balance.retrieve("balance1");
 		verifyGet(Balance.class, "https://api.pay.jp/v1/balances/balance1");
-		String id = balance.getId();
-		assertEquals(id, "balance1");
+		assertEquals(balance.getId(), "balance1");
 	}
 
 	@Test
 	public void testList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
-		listParams.put("limit", 1);
-		stubNetwork(BalanceCollection.class, "{\"count\":1,\"data\":[{\"id\":\"balance1\"}]}");
+		listParams.put("limit", 2);
+		stubNetwork(BalanceCollection.class, "{\"count\":1,\"data\":[{\"id\":\"balance1\"},{\"id\":\"balance2\"}]}");
 		List<Balance> balances = Balance.all(listParams).getData();
-		Balance balance = balances.get(0);
-		String id = balance.getId();
-		assertEquals(id, "balance1");
+		verifyGet(BalanceCollection.class, "https://api.pay.jp/v1/balances", listParams);
+		assertEquals(balances.size(), 2);
+		assertEquals(balances.get(0).getId(), "balance1");
+		assertEquals(balances.get(1).getId(), "balance2");
 	}
 
 }
