@@ -43,5 +43,6 @@
   "subscription": null,
   "tenant": "ten_121673955bd7aa144de5a8f6c262",
   "total_platform_fee": 350,
-  "three_d_secure_status": "attempt"
+  "three_d_secure_status": "attempt",
+  "term_id": "tm_b92b879e60f62b532d6756ae12cc"
 }

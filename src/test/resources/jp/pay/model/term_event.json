@@ -1,0 +1,19 @@
+{
+  "created": 1432973142,
+  "data": {
+    "created": 1438354800,
+    "id": "tm_b92b879e60f62b532d6756ae12bb",
+    "livemode": false,
+    "object": "term",
+    "charge_count": 158,
+    "refund_count": 25,
+    "dispute_count": 2,
+    "end_at": 1439650800,
+    "start_at": 1438354801
+  },
+  "id": "evnt_2f7436fe0017098bc8d222215bc",
+  "livemode": false,
+  "object": "event",
+  "pending_webhooks": 0,
+  "type": "term.created"
+}

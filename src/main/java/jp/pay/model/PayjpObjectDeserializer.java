@@ -52,6 +52,9 @@ public class PayjpObjectDeserializer implements JsonDeserializer<PayjpObject> {
         objectMap.put("transfer", Transfer.class);
         objectMap.put("summary", Summary.class);
         objectMap.put("card", Card.class);
+		objectMap.put("term", Term.class);
+		objectMap.put("statement", Statement.class);
+		objectMap.put("balance", Balance.class);
     }
 
     private Object deserializeJsonPrimitive(JsonPrimitive element) {

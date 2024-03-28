@@ -55,6 +55,7 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 	Map<String, String> metadata = new HashMap<String, String>();
 	String feeRate;
 	String threeDSecureStatus;
+	String termId;
 
 	public String getId() {
 		return id;
@@ -194,6 +195,10 @@ public class Charge extends APIResource implements MetadataStore<Charge> {
 
 	public Map<String, String> getMetadata() {
 		return metadata;
+	}
+
+	public String getTermId() {
+		return termId;
 	}
 
 	/**

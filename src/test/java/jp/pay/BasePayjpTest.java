@@ -23,6 +23,7 @@
  */
 package jp.pay;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.ArgumentMatcher;
@@ -45,6 +46,9 @@ import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 import jp.pay.net.PayjpResponseGetter;
 import jp.pay.net.LivePayjpResponseGetter;
+
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 public class BasePayjpTest {
@@ -202,5 +206,21 @@ public class BasePayjpTest {
 
 		return os.toString("utf8");
 
+	}
+
+	@Before
+    public void mockPayjpResponseGetter() {
+        APIResource.setPayjpResponseGetter(networkMock);
+    }
+
+    @After
+    public void unmockPayjpResponseGetter() {
+        /* This needs to be done because tests aren't isolated in Java */
+        APIResource.setPayjpResponseGetter(new LivePayjpResponseGetter());
+    }
+
+	@BeforeClass
+	public static void setApiKey() {
+		Payjp.apiKey = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";	// public api key for test
 	}
 }
