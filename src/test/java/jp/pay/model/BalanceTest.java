@@ -77,7 +77,7 @@ public class BalanceTest extends BasePayjpTest {
 	public void testList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 2);
-		stubNetwork(BalanceCollection.class, "{\"count\":1,\"data\":[{\"id\":\"balance1\"},{\"id\":\"balance2\"}]}");
+		stubNetwork(BalanceCollection.class, "{\"count\":2,\"data\":[{\"id\":\"balance1\"},{\"id\":\"balance2\"}]}");
 		List<Balance> balances = Balance.all(listParams).getData();
 		verifyGet(BalanceCollection.class, "https://api.pay.jp/v1/balances", listParams);
 		assertEquals(balances.size(), 2);

@@ -64,7 +64,7 @@ public class TermTest extends BasePayjpTest {
 	public void testList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 2);
-		stubNetwork(TermCollection.class, "{\"count\":1,\"data\":[{\"id\":\"term1\"},{\"id\":\"term2\"}]}");
+		stubNetwork(TermCollection.class, "{\"count\":2,\"data\":[{\"id\":\"term1\"},{\"id\":\"term2\"}]}");
 		List<Term> terms = Term.all(listParams).getData();
 		verifyGet(TermCollection.class, "https://api.pay.jp/v1/terms", listParams);
 		assertEquals(terms.size(), 2);
