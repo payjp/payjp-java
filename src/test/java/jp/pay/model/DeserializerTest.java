@@ -30,7 +30,6 @@ import org.junit.Test;
 import java.io.IOException;
 
 import jp.pay.BasePayjpTest;
-import jp.pay.model.Event;
 import jp.pay.net.APIResource;
 import static org.junit.Assert.assertEquals;
 
