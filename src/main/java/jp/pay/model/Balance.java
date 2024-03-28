@@ -77,6 +77,6 @@ public class Balance extends APIResource {
 			RequestOptions options) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
 			CardException, APIException {
-		return request(RequestMethod.GET, classURL(Statement.class), params, BalanceCollection.class, options);
+		return request(RequestMethod.GET, classURL(Balance.class), params, BalanceCollection.class, options);
 	}
 }

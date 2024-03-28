@@ -42,9 +42,13 @@ public class TermTest extends BasePayjpTest {
 	public void testDeserialize() throws PayjpException, IOException {
 		String json = resource("term.json");
 		Term term = APIResource.GSON.fromJson(json, Term.class);
-		assertEquals("tm_b92b879e60f62b532d6756ae12aa", term.getId());
 		assertEquals(Long.valueOf("1438354812"), term.getCreated());
+		assertEquals("tm_b92b879e60f62b532d6756ae12aa", term.getId());
+		assertEquals(Long.valueOf("1438354802"), term.getStartAt());
+		assertEquals(Long.valueOf("1439650803"), term.getEndAt());
 		assertEquals((Integer)987, term.getChargeCount());
+		assertEquals((Integer)58, term.getRefundCount());
+		assertEquals((Integer)5, term.getDisputeCount());
 	}
 
 	@Test
@@ -54,19 +58,19 @@ public class TermTest extends BasePayjpTest {
 		stubNetwork(Term.class, "{\"id\":\"term1\"}");
 		Term term = Term.retrieve("term1");
 		verifyGet(Term.class, "https://api.pay.jp/v1/terms/term1");
-		String id = term.getId();
-		assertEquals(id, "term1");
+		assertEquals(term.getId(), "term1");
 	}
 
 	@Test
 	public void testList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
-		stubNetwork(TermCollection.class, "{\"count\":1,\"data\":[{\"id\":\"term1\"}]}");
+		stubNetwork(TermCollection.class, "{\"count\":1,\"data\":[{\"id\":\"term1\"},{\"id\":\"term2\"}]}");
 		List<Term> terms = Term.all(listParams).getData();
-		Term term = terms.get(0);
-		String id = term.getId();
-		assertEquals(id, "term1");
+		verifyGet(TermCollection.class, "https://api.pay.jp/v1/terms", listParams);
+		assertEquals(terms.size(), 2);
+		assertEquals(terms.get(0).getId(), "term1");
+		assertEquals(terms.get(1).getId(), "term2");
 	}
 
 }

@@ -72,6 +72,6 @@ public class Term extends APIResource {
 			RequestOptions options) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,
 			CardException, APIException {
-		return request(RequestMethod.GET, classURL(Statement.class), params, TermCollection.class, options);
+		return request(RequestMethod.GET, classURL(Term.class), params, TermCollection.class, options);
 	}
 }
