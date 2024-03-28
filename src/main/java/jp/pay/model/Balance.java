@@ -5,7 +5,6 @@ import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Map;
 
 
