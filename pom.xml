@@ -3,7 +3,7 @@
     <groupId>jp.pay</groupId>
     <artifactId>payjp-java</artifactId>
     <packaging>jar</packaging>
-    <version>0.6.2</version>
+    <version>0.6.3</version>
     <name>pay-java</name>
     <url>https://github.com/payjp/payjp-java</url>
     <dependencies>
