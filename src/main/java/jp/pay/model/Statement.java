@@ -53,6 +53,14 @@ public class Statement extends APIResource {
 		return created;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public Long getUpdated() {
+		return updated;
+	}
+
 	public String getId() {
 		return id;
 	}
