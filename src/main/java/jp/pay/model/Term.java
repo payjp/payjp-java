@@ -8,7 +8,6 @@ import java.util.Map;
 
 
 public class Term extends APIResource {
-	Long created;
 	String id;
 	Boolean livemode;
 	Long startAt;
@@ -16,10 +15,6 @@ public class Term extends APIResource {
 	Integer chargeCount;
 	Integer refundCount;
 	Integer disputeCount;
-
-	public Long getCreated() {
-		return created;
-	}
 
 	public String getId() {
 		return id;

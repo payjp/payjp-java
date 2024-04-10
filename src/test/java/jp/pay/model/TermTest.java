@@ -42,7 +42,6 @@ public class TermTest extends BasePayjpTest {
 	public void testDeserialize() throws PayjpException, IOException {
 		String json = resource("term.json");
 		Term term = APIResource.GSON.fromJson(json, Term.class);
-		assertEquals(Long.valueOf("1438354812"), term.getCreated());
 		assertEquals(Boolean.FALSE, term.getLivemode());
 		assertEquals("tm_b92b879e60f62b532d6756ae12aa", term.getId());
 		assertEquals(Long.valueOf("1438354802"), term.getStartAt());

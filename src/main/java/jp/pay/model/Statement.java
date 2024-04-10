@@ -17,6 +17,8 @@ public class Statement extends APIResource {
 	Long updated;
 	Term term;
 	String balanceId;
+	String tenantId;
+	String type;
 
 	public class StatementItem {
 		Integer amount;
@@ -69,7 +71,13 @@ public class Statement extends APIResource {
 		return balanceId;
 	}
 
+	public String getTenantId() {
+		return tenantId;
+	}
 
+	public String getType() {
+		return type;
+	}
 
 	public static Statement retrieve(String id) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,

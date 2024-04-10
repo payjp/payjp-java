@@ -48,7 +48,8 @@ public class BalanceTest extends BasePayjpTest {
 		assertEquals(Long.valueOf("1438354824"), balance.getCreated());
 		assertEquals(Boolean.FALSE, balance.getLivemode());
 		assertEquals(BigInteger.valueOf(Long.valueOf("12300000000")), balance.getNet());
-		assertEquals("collecting", balance.getType());
+		assertEquals("ten_4f2a6b6b8f4b0f1e8b0fa8bca8b0", balance.getTenantId());
+		assertEquals("collecting", balance.getState());
 		assertEquals(Boolean.FALSE, balance.getClosed());
 		assertEquals(null, balance.getDueDate());
 
@@ -60,9 +61,9 @@ public class BalanceTest extends BasePayjpTest {
 		assertEquals("ペイ　タロウ", bankInfo.getBankAccountHolderName());
 		assertEquals("pending", bankInfo.getBankAccountStatus());
 
-		StatementCollection statements = balance.getStatements();
-		assertEquals("st_178fd25dc7ab7b75906f1c3c4b0e6", statements.getData().get(0).getId());
-		assertEquals("st_b4a569b0122a7d08b358f198cf263", statements.getData().get(1).getId());
+		List<Statement> statements = balance.getStatements();
+		assertEquals("st_178fd25dc7ab7b75906f1c3c4b0e6", statements.get(0).getId());
+		assertEquals("st_b4a569b0122a7d08b358f198cf263", statements.get(1).getId());
 	}
 
 	@Test

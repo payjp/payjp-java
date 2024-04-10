@@ -6,6 +6,7 @@ import jp.pay.net.RequestOptions;
 
 import java.math.BigInteger;
 import java.util.Map;
+import java.util.List;
 
 
 public class Balance extends APIResource {
@@ -13,8 +14,9 @@ public class Balance extends APIResource {
 	String id;
 	Boolean livemode;
 	BigInteger net;
-	StatementCollection statements;
-	String type;
+	String tenantId;
+	List<Statement> statements;
+	String state;
 	Boolean closed;
 	String dueDate;
 	BankInfo bankInfo;
@@ -34,13 +36,17 @@ public class Balance extends APIResource {
 	public BigInteger getNet() {
 		return net;
 	}
+	
+	public String getTenantId() {
+		return tenantId;
+	}
 
-	public StatementCollection getStatements() {
+	public List<Statement> getStatements() {
 		return statements;
 	}
 
-	public String getType() {
-		return type;
+	public String getState() {
+		return state;
 	}
 
 	public Boolean getClosed() {
