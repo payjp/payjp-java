@@ -56,7 +56,8 @@
       "end_at": 1439650800,
       "start_at": 1438354801
     },
-    "balance_id": "ba_b92b879e60f62b532d6756ae90af"
+    "balance_id": "ba_b92b879e60f62b532d6756ae90af",
+    "net": 12340000000
   },
   "id": "evnt_2f7436fe0017098bc8d22221d1e",
   "livemode": false,

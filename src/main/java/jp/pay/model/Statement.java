@@ -4,6 +4,7 @@ import jp.pay.exception.*;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class Statement extends APIResource {
 	String balanceId;
 	String tenantId;
 	String type;
+	BigInteger net;
 
 	public class StatementItem {
 		Integer amount;
@@ -77,6 +79,10 @@ public class Statement extends APIResource {
 
 	public String getType() {
 		return type;
+	}
+
+	public BigInteger getNet() {
+		return net;
 	}
 
 	public static Statement retrieve(String id) throws AuthenticationException,

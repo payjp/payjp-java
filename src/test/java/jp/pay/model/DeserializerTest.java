@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 import jp.pay.BasePayjpTest;
 import jp.pay.net.APIResource;
@@ -69,6 +70,7 @@ public class DeserializerTest extends BasePayjpTest {
 		Statement obj = (Statement)e.getData();
 		assertEquals("st_178fd25dc7ab7b75906f5d4c4b0e6", obj.getId());
 		assertEquals("ba_b92b879e60f62b532d6756ae90af", obj.getBalanceId());
+		assertEquals(BigInteger.valueOf(Long.valueOf("12340000000")), obj.getNet());
 
 		Term term = obj.getTerm();
 		assertEquals("tm_b92b879e60f62b532d6756ae12dd", term.getId());
