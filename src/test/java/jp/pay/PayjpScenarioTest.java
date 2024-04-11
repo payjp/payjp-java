@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 public class PayjpScenarioTest extends BasePayjpTest {
 	@BeforeClass
 	public static void setUp() {
-		Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";	// public api key for test
+		Payjp.apiKey = "your_secret_key";	// public api key for test
 	}
 
 	@Ignore

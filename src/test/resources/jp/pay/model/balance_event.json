@@ -1,0 +1,91 @@
+{
+  "created": 1432973142,
+  "data": {
+    "created": 1438354824,
+    "id": "ba_b92b879e60f62b532d6756ae78af",
+    "livemode": false,
+    "net": 12300000000,
+    "object": "balance",
+    "state": "collecting",
+    "statements": [
+      {
+        "created": 1695892351,
+        "id": "st_178fd25dc7ab7b75906f1c3c4b0e5",
+        "items": [
+          {
+            "amount": 25,
+            "name": "チャージバックによる手数料返還",
+            "subject": "chargeback_fee_offset",
+            "tax_rate": "0.00"
+          },
+          {
+            "amount": -775,
+            "name": "チャージバック",
+            "subject": "chargeback",
+            "tax_rate": "0.00"
+          },
+          {
+            "amount": 36,
+            "name": "返金による手数料返還",
+            "subject": "refund_fee_offset",
+            "tax_rate": "0.00"
+          },
+          {
+            "amount": -1800,
+            "name": "返金",
+            "subject": "gross_refund",
+            "tax_rate": "0.00"
+          },
+          {
+            "amount": -75,
+            "name": "決済手数料",
+            "subject": "fee",
+            "tax_rate": "0.00"
+          },
+          {
+            "amount": 3125,
+            "name": "売上",
+            "subject": "gross_sales",
+            "tax_rate": "0.00"
+          }
+        ],
+        "object": "statement",
+        "livemode": true,
+        "title": null,
+        "updated": 1695892351
+      },
+      {
+        "created": 1695892350,
+        "id": "st_b4a569b0122a7d08b358f198cf263",
+        "items": [
+          {
+            "amount": -10000,
+            "name": "プロプラン利用料",
+            "subject": "proplan",
+            "tax_rate": "10.00"
+          }
+        ],
+        "object": "statement",
+        "livemode": true,
+        "title": "プロプラン月額料金",
+        "updated": 1695892350
+      }
+    ],
+    "closed": false,
+    "due_date": null,
+    "bank_info": {
+      "bank_code": "0000",
+      "bank_branch_code": "123",
+      "bank_account_type": "普通",
+      "bank_account_number": "1234567",
+      "bank_account_holder_name": "ペイ　タロウ",
+      "bank_account_status": "pending"
+    },
+    "tenant_id": "ten_4f2a6b6b8f4b0f1e8b0fa8bca8b3"
+  },
+  "id": "evnt_2f7436fe0017098bc8d22221d1e",
+  "livemode": false,
+  "object": "event",
+  "pending_webhooks": 0,
+  "type": "balance.created"
+}

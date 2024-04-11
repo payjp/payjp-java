@@ -4,6 +4,7 @@ import jp.pay.exception.*;
 import jp.pay.net.APIResource;
 import jp.pay.net.RequestOptions;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,11 @@ public class Statement extends APIResource {
 	Boolean livemode;
 	String title;
 	Long updated;
+	Term term;
+	String balanceId;
+	String tenantId;
+	String type;
+	BigInteger net;
 
 	public class StatementItem {
 		Integer amount;
@@ -47,6 +53,14 @@ public class Statement extends APIResource {
 		return created;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public Long getUpdated() {
+		return updated;
+	}
+
 	public String getId() {
 		return id;
 	}
@@ -59,6 +73,25 @@ public class Statement extends APIResource {
 		this.livemode = livemode;
 	}
 
+	public Term getTerm() {
+		return term;
+	}
+
+	public String getBalanceId() {
+		return balanceId;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public BigInteger getNet() {
+		return net;
+	}
 
 	public static Statement retrieve(String id) throws AuthenticationException,
 			InvalidRequestException, APIConnectionException,

@@ -18,7 +18,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>jp.pay</groupId>
   <artifactId>payjp-java</artifactId>
-  <version>0.6.2</version>
+  <version>0.7.0</version>
 </dependency>
 ```
 
@@ -27,7 +27,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "jp.pay:payjp-java:0.6.2"
+compile "jp.pay:payjp-java:0.7.0"
 ```
 
 ### Others
@@ -62,7 +62,7 @@ import jp.pay.net.RequestOptions;
 public class PayjpExample {
 
     public static void main(String[] args) {
-        Payjp.apiKey = "sk_test_c62fade9d045b54cd76d7036";
+        Payjp.apiKey = "your_secret_key";
         Map<String, Object> chargeMap = new HashMap<String, Object>();
         chargeMap.put("amount", 3500);
         chargeMap.put("currency", "jpy");
