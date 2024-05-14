@@ -36,7 +36,7 @@ public class Balance extends APIResource {
 	public BigInteger getNet() {
 		return net;
 	}
-	
+
 	public String getTenantId() {
 		return tenantId;
 	}
@@ -84,5 +84,18 @@ public class Balance extends APIResource {
 			InvalidRequestException, APIConnectionException,
 			CardException, APIException {
 		return request(RequestMethod.GET, classURL(Balance.class), params, BalanceCollection.class, options);
+	}
+
+	public StatementUrl statementUrls(Map<String, Object> params)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		return this.statementUrls(params, (RequestOptions) null);
+	}
+
+	public StatementUrl statementUrls(Map<String, Object> params, RequestOptions options)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		return request(RequestMethod.POST, String.format("%s/statement_urls",
+				instanceURL(Balance.class, id)), params, StatementUrl.class, options);
 	}
 }
