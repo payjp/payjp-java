@@ -86,4 +86,16 @@ public class BalanceTest extends BasePayjpTest {
 		assertEquals(balances.get(1).getId(), "balance2");
 	}
 
+	@Test
+	public void testStatementUrls() throws PayjpException {
+		stubNetwork(Balance.class, "{\"id\":\"balance1\"}");
+		Balance balance = Balance.retrieve("balance1");
+		stubNetwork(StatementUrl.class, "{\"expires\": 1695903280,\"object\": \"statement_url\",\"url\": \"https://pay.jp/_/statements/bd84d2d680b8xxxxxxxxxxxxxxxxxxxx\"}");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("platformer", true);
+		StatementUrl url = balance.statementUrls(params);
+		verifyPost(StatementUrl.class, "https://api.pay.jp/v1/balances/balance1/statement_urls", params);
+		assertEquals(url.getUrl(), "https://pay.jp/_/statements/bd84d2d680b8xxxxxxxxxxxxxxxxxxxx");
+		assertEquals(url.getExpires().intValue(), 1695903280);
+	}
 }
