@@ -25,7 +25,7 @@ package jp.pay;
 
 public abstract class Payjp {
 	public static final String LIVE_API_BASE = "https://api.pay.jp";
-	public static final String VERSION = "0.7.1";
+	public static final String VERSION = "0.7.2";
 	public static volatile String apiKey;
 	public static volatile String apiVersion;
 	public static volatile Integer maxRetry = 0;
