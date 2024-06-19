@@ -70,7 +70,7 @@
     }
   ],
   "closed": false,
-  "due_date": null,
+  "due_date": 1711897200,
   "bank_info": {
     "bank_code": "0000",
     "bank_branch_code": "123",

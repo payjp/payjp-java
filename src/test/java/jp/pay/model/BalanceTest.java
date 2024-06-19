@@ -51,7 +51,7 @@ public class BalanceTest extends BasePayjpTest {
 		assertEquals("ten_4f2a6b6b8f4b0f1e8b0fa8bca8b0", balance.getTenantId());
 		assertEquals("collecting", balance.getState());
 		assertEquals(Boolean.FALSE, balance.getClosed());
-		assertEquals(null, balance.getDueDate());
+		assertEquals(Long.valueOf("1711897200"), balance.getDueDate());
 
 		BankInfo bankInfo = balance.getBankInfo();
 		assertEquals("0000", bankInfo.getBankCode());

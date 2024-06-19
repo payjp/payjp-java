@@ -18,7 +18,7 @@ public class Balance extends APIResource {
 	List<Statement> statements;
 	String state;
 	Boolean closed;
-	String dueDate;
+	Long dueDate;
 	BankInfo bankInfo;
 
 	public Long getCreated() {
@@ -53,7 +53,7 @@ public class Balance extends APIResource {
 		return closed;
 	}
 
-	public String getDueDate() {
+	public Long getDueDate() {
 		return dueDate;
 	}
 
