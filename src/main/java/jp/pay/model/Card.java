@@ -51,6 +51,8 @@ public class Card extends ExternalAccount implements MetadataStore<Card> {
 	Boolean livemode;
 	String name;
 	Map<String, String> metadata = new HashMap<String, String>();
+	String email;
+	String phone;
 
 	public Card update(Map<String, Object> params)
             throws AuthenticationException, InvalidRequestException,
@@ -190,4 +192,13 @@ public class Card extends ExternalAccount implements MetadataStore<Card> {
 	public void setMetadata(Map<String, String> metadata) {
 		this.metadata = metadata;
 	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
 }
