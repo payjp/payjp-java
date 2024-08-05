@@ -95,7 +95,7 @@ public class ChargeTest extends BasePayjpTest {
 		assertEquals(2020, (int) ca.getExpYear());
 		assertEquals("4242", ca.getLast4());
 		assertNull(ca.getCountry());
-		assertNull(ca.getName());
+		assertEquals("PAY TARO", ca.getName());
 		assertNull(ca.getAddressLine1());
 		assertNull(ca.getAddressLine2());
 		assertNull(ca.getAddressCity());
@@ -104,6 +104,8 @@ public class ChargeTest extends BasePayjpTest {
 		assertEquals("unchecked", ca.getAddressZipCheck());
 		assertEquals("unchecked", ca.getCvcCheck());
 		assertEquals("e1d8225886e3a7211127df751c86787f", ca.getFingerprint());
+		assertEquals("liveaccount@example.com", ca.getEmail());
+		assertEquals("+81301234567", ca.getPhone());
 		
 		assertEquals("Visa", ca.getBrand());
 	}

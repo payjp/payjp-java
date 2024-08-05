@@ -20,8 +20,10 @@
     "fingerprint": "e1d8225886e3a7211127df751c86787f",
     "id": "car_d0e44730f83b0a19ba6caee04160",
     "last4": "4242",
-    "name": null,
-    "object": "card"
+    "name": "PAY TARO",
+    "object": "card",
+    "email": "liveaccount@example.com",
+    "phone": "+81301234567"
   },
   "created": 1578372537,
   "currency": "jpy",
