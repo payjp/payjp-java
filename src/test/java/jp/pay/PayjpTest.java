@@ -938,6 +938,13 @@ public class PayjpTest extends BasePayjpTest {
 	}
 
 	@Test
+	public void testTokenTdsFinish() throws PayjpException {
+		stubNetwork(Token.class, "{\"id\":\"tok_xxxxxxxxxxxxxxxxxxxxxxxx\"}");
+		Token token = Token.tdsFinish("tok_xxxxxxxxxxxxxxxxxxxxxxxx", null, null);
+		assertEquals("tok_xxxxxxxxxxxxxxxxxxxxxxxx", token.getId());
+	}
+
+	@Test
 	public void testEventRetrieve() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 1);
