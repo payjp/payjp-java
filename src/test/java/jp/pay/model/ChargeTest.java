@@ -59,7 +59,7 @@ public class ChargeTest extends BasePayjpTest {
 	@Test
 	public void testDeserialize() throws PayjpException, IOException {
 		String json = resource("charge.json");
-		
+
 		Charge ch = APIResource.GSON.fromJson(json, Charge.class);
 
 		assertEquals("ch_fa990a4c10672a93053a774730b0a", ch.getId());
@@ -106,7 +106,8 @@ public class ChargeTest extends BasePayjpTest {
 		assertEquals("e1d8225886e3a7211127df751c86787f", ca.getFingerprint());
 		assertEquals("liveaccount@example.com", ca.getEmail());
 		assertEquals("+81301234567", ca.getPhone());
-		
+		assertNull(ca.getThreeDSecureStatus());
+
 		assertEquals("Visa", ca.getBrand());
 	}
 }
