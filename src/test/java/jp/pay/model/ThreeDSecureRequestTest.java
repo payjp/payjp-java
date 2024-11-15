@@ -69,7 +69,8 @@ public class ThreeDSecureRequestTest extends BasePayjpTest {
 	public void testList() throws PayjpException {
 		Map<String, Object> listParams = new HashMap<String, Object>();
 		listParams.put("limit", 2);
-		stubNetwork(ThreeDSecureRequestCollection.class, "{\"count\":2,\"data\":[{\"id\":\"tdsr_xxxxx\"},{\"id\":\"tdsr_yyyyy\"}]}");
+		stubNetwork(ThreeDSecureRequestCollection.class,
+				"{\"count\":2,\"data\":[{\"id\":\"tdsr_xxxxx\"},{\"id\":\"tdsr_yyyyy\"}]}");
 		List<ThreeDSecureRequest> threeDSecureRequests = ThreeDSecureRequest.all(listParams).getData();
 		verifyGet(ThreeDSecureRequestCollection.class, "https://api.pay.jp/v1/three_d_secure_requests", listParams);
 		assertEquals(threeDSecureRequests.size(), 2);
@@ -85,5 +86,6 @@ public class ThreeDSecureRequestTest extends BasePayjpTest {
 		ThreeDSecureRequest threeDSecureRequest = ThreeDSecureRequest.create(createThreeDSecureRequestParams);
 		assertEquals(threeDSecureRequest.getId(), "tdsr_xxxxx");
 		assertEquals(threeDSecureRequest.getResourceId(), "car_xxxxx");
+		verifyPost(ThreeDSecureRequest.class, "https://api.pay.jp/v1/three_d_secure_requests", createThreeDSecureRequestParams);
 	}
 }
