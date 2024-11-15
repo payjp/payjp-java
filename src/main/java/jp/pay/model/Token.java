@@ -112,4 +112,10 @@ public class Token extends APIResource {
 			APIConnectionException, CardException, APIException {
 		return request(RequestMethod.GET, instanceURL(Token.class, id), null, Token.class, options);
 	}
+
+	public static Token tdsFinish(String id, Map<String, Object> params, RequestOptions options)
+			throws AuthenticationException, InvalidRequestException,
+			APIConnectionException, CardException, APIException {
+		return request(RequestMethod.POST, String.format("%s/tds_finish", instanceURL(Token.class, id)), params, Token.class, options);
+	}
 }

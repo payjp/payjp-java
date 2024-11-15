@@ -23,7 +23,8 @@
     "name": "PAY TARO",
     "object": "card",
     "email": "liveaccount@example.com",
-    "phone": "+81301234567"
+    "phone": "+81301234567",
+    "three_d_secure_status": null
   },
   "created": 1578372537,
   "currency": "jpy",
