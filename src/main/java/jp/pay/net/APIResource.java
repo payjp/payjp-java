@@ -42,6 +42,7 @@ import jp.pay.model.PayjpObject;
 import jp.pay.model.PayjpObjectDeserializer;
 import jp.pay.model.PayjpRawJsonObject;
 import jp.pay.model.PayjpRawJsonObjectDeserializer;
+import jp.pay.model.ThreeDSecureRequest;
 
 public abstract class APIResource extends PayjpObject {
 	private static PayjpResponseGetter payjpResponseGetter = new LivePayjpResponseGetter();
@@ -68,6 +69,8 @@ public abstract class APIResource extends PayjpObject {
 			return "file";
 		} else if (className.equals("bitcoinreceiver")) {
 			return "bitcoin_receiver";
+		} else if (className.equals(ThreeDSecureRequest.class.getSimpleName().toLowerCase())) {
+			return "three_d_secure_request";
 		} else {
 			return className;
 		}
