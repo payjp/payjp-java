@@ -942,6 +942,7 @@ public class PayjpTest extends BasePayjpTest {
 		stubNetwork(Token.class, "{\"id\":\"tok_xxxxxxxxxxxxxxxxxxxxxxxx\"}");
 		Token token = Token.tdsFinish("tok_xxxxxxxxxxxxxxxxxxxxxxxx", null, null);
 		assertEquals("tok_xxxxxxxxxxxxxxxxxxxxxxxx", token.getId());
+		verifyPost(Token.class, "https://api.pay.jp/v1/tokens/tok_xxxxxxxxxxxxxxxxxxxxxxxx/tds_finish", null);
 	}
 
 	@Test
