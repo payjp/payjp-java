@@ -24,7 +24,8 @@
     "object": "card",
     "email": "liveaccount@example.com",
     "phone": "+81301234567",
-    "three_d_secure_status": null
+    "three_d_secure_status": null,
+    "is_jp": true
   },
   "created": 1578372537,
   "currency": "jpy",

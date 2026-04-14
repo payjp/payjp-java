@@ -47,6 +47,7 @@ public class TokenTest extends BasePayjpTest {
 		assertEquals(Boolean.FALSE, token.getLivemode());
 		assertEquals(Boolean.FALSE, token.getUsed());
 		assertEquals("card", token.getCard().getObject());
+		assertEquals(Boolean.FALSE, token.getCard().getIsJp());
 	}
 
 	@Test

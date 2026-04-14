@@ -107,6 +107,7 @@ public class ChargeTest extends BasePayjpTest {
 		assertEquals("liveaccount@example.com", ca.getEmail());
 		assertEquals("+81301234567", ca.getPhone());
 		assertNull(ca.getThreeDSecureStatus());
+		assertTrue(ca.getIsJp());
 
 		assertEquals("Visa", ca.getBrand());
 	}

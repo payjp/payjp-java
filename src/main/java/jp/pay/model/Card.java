@@ -54,6 +54,7 @@ public class Card extends ExternalAccount implements MetadataStore<Card> {
 	String email;
 	String phone;
 	String threeDSecureStatus;
+	Boolean isJp;
 
 	public Card update(Map<String, Object> params)
             throws AuthenticationException, InvalidRequestException,
@@ -204,6 +205,10 @@ public class Card extends ExternalAccount implements MetadataStore<Card> {
 
 	public String getThreeDSecureStatus() {
 		return threeDSecureStatus;
+	}
+
+	public Boolean getIsJp() {
+		return isJp;
 	}
 
 }
