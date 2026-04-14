@@ -35,11 +35,22 @@
         <name>Payjp</name>
         <url>https://pay.jp</url>
     </organization>
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>payjp</id>
+            <name>PAY.JP</name>
+            <email>support@pay.jp</email>
+            <organization>PAY, Inc.</organization>
+            <organizationUrl>https://pay.jp</organizationUrl>
+        </developer>
+    </developers>
     <scm>
         <connection>scm:git:git@github.com:payjp/payjp-java.git</connection>
         <developerConnection>scm:git:git@github.com:payjp/payjp-java.git</developerConnection>
@@ -121,22 +132,15 @@
                 </configuration>
             </plugin>
             <plugin>
-              <groupId>org.sonatype.plugins</groupId>
-              <version>1.6.4</version>
-              <artifactId>nexus-staging-maven-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-deploy</id>
-                  <phase>deploy</phase>
-                  <goals>
-                    <goal>deploy</goal>
-                  </goals>
-                </execution>
-              </executions>
-              <configuration>
-                <serverId>sonatype-nexus-staging</serverId>
-                <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-              </configuration>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.10.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>published</waitUntil>
+                </configuration>
             </plugin>
         </plugins>
     </build>
